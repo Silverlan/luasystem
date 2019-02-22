@@ -602,3 +602,4 @@ lua.VC.db
 Debug/luasystem.exp
 a.out
 lua.sdf
+build_winx64/

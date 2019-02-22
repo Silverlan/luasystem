@@ -7,16 +7,6 @@
 #include "impl_luajit_definitions.hpp"
 #include <sharedutils/util_string.h>
 
-#pragma comment(lib,"vfilesystem.lib")
-#ifdef USE_LUAJIT
-	#pragma comment(lib,"lua51.lib")
-#else
-	#pragma comment(lib,"lua530.lib")
-#endif
-#pragma comment(lib,"luabind.lib")
-#pragma comment(lib,"util.lib")
-#pragma comment(lib,"mathutil.lib")
-
 lua_State *Lua::CreateState()
 {
 	lua_State *lua = luaL_newstate();
