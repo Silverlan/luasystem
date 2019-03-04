@@ -368,14 +368,14 @@ static std::string GetPathFromFileName(std::string str)
 }
 
 static std::vector<std::string> s_includeStack;
-Lua::StatusCode Lua::ExecuteFile(lua_State *lua,std::string &fInOut,int32_t(*traceback)(lua_State*))
+Lua::StatusCode Lua::ExecuteFile(lua_State *lua,std::string &fInOut,int32_t(*traceback)(lua_State*),int32_t numRet)
 {
 	fInOut = FileManager::GetNormalizedPath(fInOut);
 	auto path = GetPathFromFileName(fInOut);
 	s_includeStack.push_back(path);
 	auto s = ProtectedCall(lua,[&fInOut](lua_State *l) {
 		return Lua::LoadFile(l,fInOut);
-	},0,traceback);
+	},numRet,traceback);
 	s_includeStack.pop_back();
 	return static_cast<StatusCode>(s);
 }
@@ -448,10 +448,10 @@ std::string Lua::GetIncludePath(const std::string &f)
 
 std::string Lua::GetIncludePath() {return GetIncludePath("");}
 
-Lua::StatusCode Lua::IncludeFile(lua_State *lua,std::string &fInOut,int32_t(*traceback)(lua_State*))
+Lua::StatusCode Lua::IncludeFile(lua_State *lua,std::string &fInOut,int32_t(*traceback)(lua_State*),int32_t numRet)
 {
 	fInOut = GetIncludePath(fInOut);
-	return ExecuteFile(lua,fInOut,traceback);
+	return ExecuteFile(lua,fInOut,traceback,numRet);
 }
 
 const char *Lua::GetTypeString(lua_State *l,int32_t n)

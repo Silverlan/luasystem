@@ -200,8 +200,8 @@ namespace Lua
 
 	DLLLUA void CollectGarbage(lua_State *lua);
 
-	DLLLUA StatusCode ExecuteFile(lua_State *lua,std::string &fInOut,int32_t(*traceback)(lua_State*)=nullptr);
-	DLLLUA StatusCode IncludeFile(lua_State *lua,std::string &fInOut,int32_t(*traceback)(lua_State*)=nullptr);
+	DLLLUA StatusCode ExecuteFile(lua_State *lua,std::string &fInOut,int32_t(*traceback)(lua_State*)=nullptr,int32_t numRet=0);
+	DLLLUA StatusCode IncludeFile(lua_State *lua,std::string &fInOut,int32_t(*traceback)(lua_State*)=nullptr,int32_t numRet=0);
 	DLLLUA std::string GetIncludePath();
 	DLLLUA std::string GetIncludePath(const std::string &f);
 	DLLLUA StatusCode RunString(lua_State *lua,const std::string &str,int32_t retCount,const std::string &chunkName,int32_t(*traceback)(lua_State*)=nullptr);
