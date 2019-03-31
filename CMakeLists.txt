@@ -60,7 +60,9 @@ link_external_library(sharedutils)
 link_external_library(mathutil)
 link_external_library(vfilesystem)
 link_external_library(LuaJIT)
-add_external_library(lua)
+if(WIN32)
+	add_external_library(lua)
+endif()
 link_external_library(luabind)
 
 add_include_dir(boost)
@@ -74,7 +76,7 @@ set(DEFINITIONS
 	BOOST_ALL_DYN_LINK
 )
 
-if($(CONFIG_USE_LUAJIT) MATCHES ON)
+if($(CONFIG_USE_LUAJIT))
 	list(APPEND DEFINITIONS USE_LUAJIT)
 endif()
 
@@ -84,7 +86,7 @@ set(LIB_TYPE SHARED)
 if(ENABLE_STATIC_LIBRARY_FLAG MATCHES 1)
 	set(CONFIG_STATIC_LIBRARY 0 CACHE BOOL "Build as static library?")
 endif()
-if((DEFINED CONFIG_STATIC_LIBRARY) AND (${CONFIG_STATIC_LIBRARY} MATCHES ON))
+if(DEFINED ${CONFIG_STATIC_LIBRARY} AND ${CONFIG_STATIC_LIBRARY})
 	set(LIB_TYPE STATIC)
 endif()
 
@@ -124,7 +126,7 @@ endforeach(INCLUDE_PATH)
 
 set(TARGET_PROPERTIES LINKER_LANGUAGE CXX)
 if(DEFINED PRECOMPILED_HEADER)
-	set(TARGET_PROPERTIES ${TARGET_PROPERTIES} COMPILE_FLAGS /Yu"${PRECOMPILED_HEADER}.h")
-	set_source_files_properties("${CMAKE_CURRENT_LIST_DIR}/src/${PRECOMPILED_HEADER}.cpp" PROPERTIES COMPILE_FLAGS "/Yc${PRECOMPILED_HEADER}.h")
+	include(PrecompiledHeader.cmake)
+	add_precompiled_header(${PROJ_NAME} "src/${PRECOMPILED_HEADER}.h" c++17 FORCEINCLUDE)
 endif()
 set_target_properties(${PROJ_NAME} PROPERTIES ${TARGET_PROPERTIES})
