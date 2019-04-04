@@ -11,8 +11,6 @@ extern "C" {
 	#include "lualib.h"
 	#include "lauxlib.h"
 }
-#include <boost/core/ref.hpp>
-#include <luabind/boost_tuple_extended.hpp>
 #include <luabind/luabind.hpp>
 #include <luabind/operator.hpp>
 #include <string>
