@@ -120,6 +120,10 @@ foreach(LIB IN LISTS LIBRARIES)
 	target_link_libraries(${PROJ_NAME} ${${LIB}})
 endforeach(LIB)
 
+if(UNIX)
+	target_link_libraries(${PROJ_NAME} dl)
+endif()
+
 target_include_directories(${PROJ_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include)
 target_include_directories(${PROJ_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/src)
 
