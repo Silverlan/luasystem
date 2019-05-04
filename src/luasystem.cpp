@@ -168,7 +168,7 @@ void *Lua::ToUserData(lua_State *lua,int32_t idx) {return lua_touserdata(lua,idx
 ptrdiff_t Lua::CheckInt(lua_State *lua,int32_t idx)
 {
 	Lua::CheckNumber(lua,idx);
-	return lua_tointeger(lua,idx);//luaL_checkinteger(lua,idx);
+	return lua_tointeger(lua,idx);
 }
 double Lua::CheckNumber(lua_State *lua,int32_t idx) {return luaL_checknumber(lua,idx);}
 const char *Lua::CheckString(lua_State *lua,int32_t idx) {return luaL_checkstring(lua,idx);}
