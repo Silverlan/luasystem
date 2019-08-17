@@ -144,6 +144,7 @@ namespace Lua
 	DLLLUA void CheckNil(lua_State *lua,int32_t idx);
 	DLLLUA void CheckThread(lua_State *lua,int32_t idx);
 	DLLLUA bool CheckBool(lua_State *lua,int32_t idx);
+	DLLLUA bool PushLuaFunctionFromString(lua_State *l,const std::string &luaFunction,const std::string &chunkName,std::string &outErrMsg);
 
 	DLLLUA Type GetType(lua_State *lua,int32_t idx);
 	DLLLUA const char *GetTypeName(lua_State *lua,int32_t idx);

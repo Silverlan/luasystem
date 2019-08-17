@@ -188,6 +188,23 @@ bool Lua::CheckBool(lua_State *lua,int32_t idx)
 	}
 	return (lua_toboolean(lua,idx) == 1) ? true : false;
 }
+bool Lua::PushLuaFunctionFromString(lua_State *l,const std::string &luaFunction,const std::string &chunkName,std::string &outErrMsg)
+{
+	auto bufLuaFunction = "return " +luaFunction;
+	auto r = static_cast<Lua::StatusCode>(luaL_loadbuffer(l,bufLuaFunction.c_str(),bufLuaFunction.length(),chunkName.c_str())); /* 1 */
+	if(r != Lua::StatusCode::Ok)
+	{
+		outErrMsg = Lua::CheckString(l,-1);
+		Lua::Pop(l); /* 0 */
+		return false;
+	}
+	if(Lua::ProtectedCall(l,0,1,&outErrMsg) != Lua::StatusCode::Ok)
+	{
+		Lua::Pop(l); /* 0 */
+		return false;
+	}
+	return true;
+}
 
 Lua::Type Lua::GetType(lua_State *lua,int32_t idx) {return static_cast<Type>(lua_type(lua,idx));}
 const char *Lua::GetTypeName(lua_State *lua,int32_t idx) {return lua_typename(lua,idx);}
