@@ -7,6 +7,7 @@
 #include "impl_luajit_definitions.hpp"
 #include <sharedutils/util_string.h>
 
+#pragma optimize("",off)
 lua_State *Lua::CreateState()
 {
 	lua_State *lua = luaL_newstate();
@@ -113,13 +114,19 @@ Lua::StatusCode Lua::ProtectedCall(lua_State *lua,const std::function<StatusCode
 		{
 			if(traceback != nullptr)
 				RemoveValue(lua,tracebackIdx);
+			auto newTop = GetStackTop(lua);
+			if(newTop > top)
+				Pop(lua,newTop -top);
 			return static_cast<StatusCode>(s);
 		}
 	}
+
 	auto numArgs = GetStackTop(lua) -top -1;
 	auto r = lua_pcall(lua,numArgs,numResults,tracebackIdx);
 	if(traceback != nullptr)
 		RemoveValue(lua,tracebackIdx);
+	if(static_cast<StatusCode>(r) != StatusCode::Ok)
+		Lua::Pop(lua,1); // Pop error message from stack
 	return static_cast<StatusCode>(r);
 }
 Lua::StatusCode Lua::ProtectedCall(lua_State *lua,int32_t nargs,int32_t nresults,std::string *err)
@@ -575,3 +582,4 @@ void Lua::GetField(lua_State *l,int32_t idx,const std::string &fieldName)
 	lua_getfield(l,idx,fieldName.c_str());
 }
 
+#pragma optimize("",on)
