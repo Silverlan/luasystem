@@ -7,7 +7,6 @@
 #include "impl_luajit_definitions.hpp"
 #include <sharedutils/util_string.h>
 
-#pragma optimize("",off)
 lua_State *Lua::CreateState()
 {
 	lua_State *lua = luaL_newstate();
@@ -581,5 +580,3 @@ void Lua::GetField(lua_State *l,int32_t idx,const std::string &fieldName)
 {
 	lua_getfield(l,idx,fieldName.c_str());
 }
-
-#pragma optimize("",on)

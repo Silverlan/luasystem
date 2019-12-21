@@ -67,7 +67,7 @@ link_external_library(luabind)
 
 add_include_dir(boost)
 
-set(CONFIG_USE_LUAJIT "1" CACHE BOOL "Use LuaJIT.")
+option(CONFIG_USE_LUAJIT "Use LuaJIT." ON)
 
 set(DEFINITIONS
 	DLLLUA_EX
@@ -82,8 +82,8 @@ endif()
 ##### CONFIGURATION #####
 
 set(LIB_TYPE SHARED)
-if(ENABLE_STATIC_LIBRARY_FLAG MATCHES 1)
-	set(CONFIG_STATIC_LIBRARY 0 CACHE BOOL "Build as static library?")
+if(ENABLE_STATIC_LIBRARY_FLAG)
+	option(CONFIG_STATIC_LIBRARY "Build as static library?" OFF)
 endif()
 if(DEFINED ${CONFIG_STATIC_LIBRARY} AND ${CONFIG_STATIC_LIBRARY})
 	set(LIB_TYPE STATIC)
