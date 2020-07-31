@@ -558,7 +558,7 @@ luabind::object Lua::WeakReferenceToObject(const luabind::weak_ref &ref)
 	return r;
 }
 
-void Lua::RegisterLibraryEnums(lua_State *l,const std::string &libName,const std::unordered_map<std::string,int32_t> &enums)
+void Lua::RegisterLibraryEnums(lua_State *l,const std::string &libName,const std::unordered_map<std::string,lua_Integer> &enums)
 {
 	get_global_nested_library(l,libName);
 	if(Lua::IsNil(l,-1))

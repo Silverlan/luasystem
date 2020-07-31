@@ -212,7 +212,7 @@ namespace Lua
 	DLLLUA luabind::weak_ref CreateWeakReference(const luabind::object &o);
 	DLLLUA void PushWeakReference(const luabind::weak_ref &ref);
 	DLLLUA luabind::object WeakReferenceToObject(const luabind::weak_ref &ref);
-	DLLLUA void RegisterLibraryEnums(lua_State *l,const std::string &libName,const std::unordered_map<std::string,int32_t> &enums);
+	DLLLUA void RegisterLibraryEnums(lua_State *l,const std::string &libName,const std::unordered_map<std::string,lua_Integer> &enums);
 
 	template<class T>
 		void RegisterLibraryValue(lua_State *l,const std::string &libName,const std::string &key,const T &val);
