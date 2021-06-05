@@ -188,6 +188,7 @@ namespace Lua
 	// Assigns the key n of a table at the index idx to whatever is at the top of the stack
 	DLLLUA void SetTableValue(lua_State *lua,int32_t idx,int32_t n);
 	DLLLUA std::size_t GetObjectLength(lua_State *l,int32_t idx);
+	DLLLUA std::size_t GetObjectLength(lua_State *l,const luabind::object &o);
 
 	// Pushes a copy of the given element to the top of the stack
 	DLLLUA void PushValue(lua_State *lua,int32_t idx);

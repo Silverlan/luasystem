@@ -215,7 +215,12 @@ bool Lua::PushLuaFunctionFromString(lua_State *l,const std::string &luaFunction,
 Lua::Type Lua::GetType(lua_State *lua,int32_t idx) {return static_cast<Type>(lua_type(lua,idx));}
 const char *Lua::GetTypeName(lua_State *lua,int32_t idx) {return lua_typename(lua,idx);}
 
-void Lua::Pop(lua_State *lua,int32_t n) {lua_pop(lua,n);}
+void Lua::Pop(lua_State *lua,int32_t n)
+{
+	if(n <= 0)
+		return;
+	lua_pop(lua,n);
+}
 
 void Lua::Error(lua_State *lua) {lua_error(lua);}
 void Lua::Error(lua_State *lua,const std::string &err)
@@ -259,6 +264,13 @@ int32_t Lua::PushTable(lua_State *lua,int32_t n,int32_t idx)
 void Lua::SetTableValue(lua_State *lua,int32_t idx) {lua_settable(lua,idx);}
 void Lua::GetTableValue(lua_State *lua,int32_t idx) {lua_gettable(lua,idx);}
 void Lua::SetTableValue(lua_State *lua,int32_t idx,int32_t n) {lua_rawseti(lua,idx,n);}
+std::size_t Lua::GetObjectLength(lua_State *l,const luabind::object &o)
+{
+	o.push(l);
+	auto len = GetObjectLength(l,-1);
+	Pop(l);
+	return len;
+}
 std::size_t Lua::GetObjectLength(lua_State *l,int32_t idx)
 {
 	return lua_rawlen(l,idx);
