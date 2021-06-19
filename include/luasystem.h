@@ -215,23 +215,7 @@ namespace Lua
 	DLLLUA luabind::object WeakReferenceToObject(const luabind::weak_ref &ref);
 	DLLLUA void RegisterLibraryEnums(lua_State *l,const std::string &libName,const std::unordered_map<std::string,lua_Integer> &enums);
 	template<typename T>
-		void RegisterLibraryValues(lua_State *l,const std::string &libName,const std::unordered_map<std::string,T> &values)
-	{
-		get_global_nested_library(l,libName);
-		if(Lua::IsNil(l,-1))
-			throw std::runtime_error("No library '" +libName +" found!");
-		auto t = GetStackTop(l);
-		if(!IsNil(l,t))
-		{
-			for(auto &pair : values)
-			{
-				PushString(l,pair.first);
-				Push<T>(l,pair.second);
-				SetTableValue(l,t);
-			}
-		}
-		Pop(l,1);
-	}
+		void RegisterLibraryValues(lua_State *l,const std::string &libName,const std::unordered_map<std::string,T> &values);
 
 	template<class T>
 		void RegisterLibraryValue(lua_State *l,const std::string &libName,const std::string &key,const T &val);
@@ -247,6 +231,25 @@ namespace Lua
 	DLLLUA bool compile_file(lua_State *l,const std::string &outPath);
 	DLLLUA std::string get_current_file(lua_State *l);
 };
+
+template<typename T>
+	void Lua::RegisterLibraryValues(lua_State *l,const std::string &libName,const std::unordered_map<std::string,T> &values)
+{
+	get_global_nested_library(l,libName);
+	if(Lua::IsNil(l,-1))
+		throw std::runtime_error("No library '" +libName +" found!");
+	auto t = GetStackTop(l);
+	if(!IsNil(l,t))
+	{
+		for(auto &pair : values)
+		{
+			PushString(l,pair.first);
+			Push<T>(l,pair.second);
+			SetTableValue(l,t);
+		}
+	}
+	Pop(l,1);
+}
 
 template<class T>
 	T Lua::CheckInt(lua_State *lua,int32_t idx) {return static_cast<T>(CheckInt(lua,idx));}
