@@ -81,6 +81,12 @@ namespace Lua
 		UserData = LUA_TUSERDATA,
 		Thread = LUA_TTHREAD
 	};
+
+	template <typename T>
+		using base_type = typename std::remove_cv_t<std::remove_pointer_t<std::remove_reference_t<T>>>;
+	template<typename T>
+		concept is_native_type = std::is_arithmetic_v<T> || std::is_same_v<base_type<T>,std::string> || std::is_same_v<T,const char*>;
+
 	const auto RegistryIndex = LUA_REGISTRYINDEX;
 	DLLLUA lua_State *CreateState();
 	DLLLUA void CloseState(lua_State *lua);
@@ -103,6 +109,36 @@ namespace Lua
 	DLLLUA bool IsTable(lua_State *lua,int32_t idx);
 	DLLLUA bool IsUserData(lua_State *lua,int32_t idx);
 
+	template<class T> requires(is_native_type<T>)
+		void Push(lua_State *lua,T value)
+	{
+		if constexpr(std::is_pointer_v<T>)
+		{
+			if(!value)
+				lua_pushnil(lua);
+			else
+				Push(lua,*value);
+		}
+		else
+		{
+			using TBase = base_type<T>;
+			if constexpr(std::is_same_v<TBase,bool>)
+				lua_pushboolean(lua,value);
+			else if constexpr(std::is_integral_v<TBase>)
+				lua_pushinteger(lua,value);
+			else if constexpr(std::is_arithmetic_v<TBase>)
+				lua_pushnumber(lua,value);
+			else if constexpr(std::is_same_v<TBase,std::string>)
+				lua_pushstring(lua,value.c_str());
+			else
+				lua_pushstring(lua,value);
+		}
+	}
+	template<class T> requires(!is_native_type<T>)
+		void Push(lua_State *lua,const T &value)
+	{
+		luabind::object(lua,value).push(lua);
+	}
 	template<class T>
 		void Push(lua_State *lua,const T &obj);
 	template<class T>
@@ -260,12 +296,6 @@ template<class T>
 	T Lua::ToInt(lua_State *lua,int32_t idx) {return static_cast<T>(ToInt(lua,idx));}
 template<class T>
 	T Lua::ToNumber(lua_State *lua,int32_t idx) {return static_cast<T>(CheckNumber(lua,idx));}
-
-template<class T>
-	void Lua::Push(lua_State *lua,const T &obj)
-{
-	luabind::object(lua,obj).push(lua);
-}
 
 template<class T>
 	void Lua::PushNumber(lua_State *lua,T t) {PushNumber(lua,static_cast<double>(t));}
