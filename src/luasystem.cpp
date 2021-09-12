@@ -112,7 +112,10 @@ Lua::StatusCode Lua::ProtectedCall(lua_State *lua,const std::function<StatusCode
 		if(s != 0)
 		{
 			if(traceback != nullptr)
+			{
 				RemoveValue(lua,tracebackIdx);
+				traceback(lua);
+			}
 			auto newTop = GetStackTop(lua);
 			if(newTop > top)
 				Pop(lua,newTop -top);
