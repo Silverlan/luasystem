@@ -46,7 +46,8 @@ runs:
       shell: bash
       run: |
         cd ${{ inputs.root_dir }}/third_party_libs/luajit/src
-        cmd.exe /c "${{ matrix.config.environment_script }}"
+        envScript="${{ matrix.config.environment_script }}"
+        cmd.exe /c "$envScript"
         chmod +x msvcbuild.bat
         ./msvcbuild.bat
         
