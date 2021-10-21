@@ -54,7 +54,7 @@ runs:
     - name: Download submodule - luabind
       uses: Silverlan/common_actions/build_submodule@main
       with:
-        build_target: 'LuaBind'
+        build_target: 'src/luabind'
         repo: 'https://github.com/Silverlan/luabind-deboostified'
         repo_name: 'luabind-deboostified'
         cmake_var: 'DEPENDENCY_LUABIND_INCLUDE'
