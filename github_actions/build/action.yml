@@ -41,14 +41,16 @@ runs:
         cmake_var: 'DEPENDENCY_LUAJIT_INCLUDE'
         include_dir: 'src'
         
+    - uses: ilammy/msvc-dev-cmd@v1.10.0
+        
     - name: Build LuaJit
       id: build-luajit
       shell: bash
       run: |
         cd ${{ inputs.root_dir }}/third_party_libs/luajit/src
         # envScript="${{ matrix.config.environment_script }}"
-        envScript="/c/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
-        cmd.exe /c "$envScript"
+        # envScript="/c/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
+        # cmd.exe /c "$envScript"
         chmod +x msvcbuild.bat
         ./msvcbuild.bat
         
