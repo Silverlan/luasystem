@@ -61,6 +61,14 @@ runs:
       with:
         cmake_var: ' -DDEPENDENCY_LUA_LIBRARY=${{ inputs.root_dir }}/third_party_libs/luajit/src/lua51${{ env.GA_SHARED_LINK_LIBRARY_EXT }}'
         
+    - name: Build LuaJit
+      id: build
+      shell: bash
+      env:
+      run: |
+        cd ${{ inputs.root_dir }}/third_party_libs/luajit/src
+        msvcbuild.bat
+        
     - name: Download submodule - luabind
       uses: Silverlan/common_actions/build_submodule@main
       with:
