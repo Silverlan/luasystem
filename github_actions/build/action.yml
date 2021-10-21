@@ -41,6 +41,16 @@ runs:
         cmake_var: 'DEPENDENCY_LUAJIT_INCLUDE'
         include_dir: 'src'
         
+    - name: Define CMake Variable LUA_INCLUDE_DIR
+      uses: Silverlan/common_actions/define_cmake_var@main
+      with:
+        cmake_var: ' -DLUA_INCLUDE_DIR=third_party_libs/luajit/src'
+        
+    - name: Define CMake Variable LUA_LIBRARIES
+      uses: Silverlan/common_actions/define_cmake_var@main
+      with:
+        cmake_var: ' -LUA_LIBRARIES=third_party_libs/luajit/src/lua51${{ env.GA_SHARED_LINK_LIBRARY_EXT }}'
+        
     - name: Download submodule - luabind
       uses: Silverlan/common_actions/build_submodule@main
       with:
