@@ -31,6 +31,26 @@ runs:
             cmake_var: 'DEPENDENCY_LUASYSTEM_INCLUDE'
             dir: 'external_libs'
             
+    - name: Download submodule - LuaJIT
+      uses: Silverlan/common_actions/get_submodule@main
+      with:
+        dir: 'third_party_libs'
+        repo: 'https://github.com/Silverlan/LuaJIT'
+        repo_name: 'LuaJIT'
+        repo_branch: 'v2.1'
+        cmake_var: 'DEPENDENCY_LUAJIT_INCLUDE'
+        include_dir: 'src'
+        
+    - name: Download submodule - luabind
+      uses: Silverlan/common_actions/build_submodule@main
+      with:
+        build_target: 'LuaBind'
+        repo: 'https://github.com/Silverlan/luabind-deboostified'
+        repo_name: 'luabind-deboostified'
+        cmake_var: 'DEPENDENCY_LUABIND_INCLUDE'
+        cmake_var_lib: 'DEPENDENCY_LUABIND_LIBRARY'
+        include_dir: '.'
+            
     - name: Download common external libs
       uses: Silverlan/common_actions/get_common_external_libs@main
 
