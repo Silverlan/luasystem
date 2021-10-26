@@ -401,7 +401,7 @@ void Lua::PushRegistryValue(lua_State *l,int32_t n) {lua_rawgeti(l,RegistryIndex
 static std::string GetPathFromFileName(std::string str)
 {
 	auto br = str.find_last_of("/\\");
-	if(br == std::string::npos) return "";
+	if(br == std::string::npos || str.length() == 1) return "";
 	return str.substr(0,br +1);
 }
 
