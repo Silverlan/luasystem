@@ -13,6 +13,7 @@ extern "C" {
 }
 #include <luabind/luabind.hpp>
 #include <luabind/operator.hpp>
+#include <luabind/detail/conversion_policies/pointer_converter.hpp>
 #include <string>
 #include <unordered_map>
 #include <memory>
@@ -145,6 +146,20 @@ namespace Lua
 		void PushNumber(lua_State *lua,T t);
 	template<class T>
 		void PushInt(lua_State *lua,T t);
+	template<typename T>
+		void PushRaw(lua_State *l,T &&value)
+	{
+		if constexpr(std::is_pointer_v<T>)
+		{
+			luabind::detail::pointer_converter pc;
+			pc.to_lua(l,value);
+		}
+		else
+		{
+			luabind::detail::value_converter vc;
+			vc.to_lua(l,value);
+		}
+	}
 	DLLLUA void PushBool(lua_State *lua,bool b);
 	DLLLUA void PushCFunction(lua_State *lua,lua_CFunction f);
 	DLLLUA void PushInt(lua_State *lua,ptrdiff_t i);
