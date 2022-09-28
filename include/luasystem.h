@@ -110,8 +110,13 @@ namespace Lua
 	DLLLUA bool IsTable(lua_State *lua,int32_t idx);
 	DLLLUA bool IsUserData(lua_State *lua,int32_t idx);
 
+
+    //this won't work. Compiler will emit diffrent symbols.
+    //Might be pre C++20 remnant.
+    //template<class T>
+        //void Push(lua_State *lua,const T &value);
 	template<class T> requires(is_native_type<T>)
-		void Push(lua_State *lua,T value)
+    void Push(lua_State *lua,T value)
 	{
 		if constexpr(std::is_pointer_v<T>)
 		{
@@ -139,9 +144,7 @@ namespace Lua
 		void Push(lua_State *lua,const T &value)
 	{
 		luabind::object(lua,value).push(lua);
-	}
-	template<class T>
-		void Push(lua_State *lua,const T &obj);
+    }
 	template<class T>
 		void PushNumber(lua_State *lua,T t);
 	template<class T>
