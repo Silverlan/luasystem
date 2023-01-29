@@ -11,16 +11,16 @@
 #define USE_LUAJIT
 
 #ifdef DLLLUA_EX
-	#ifdef __linux__
-		#define DLLLUA __attribute__((visibility("default")))
-	#else
-		#define DLLLUA  __declspec(dllexport)
-	#endif
+#ifdef __linux__
+#define DLLLUA __attribute__((visibility("default")))
 #else
-	#ifdef __linux__
-		#define DLLLUA
-	#else
-		#define DLLLUA  __declspec(dllimport)
-	#endif
+#define DLLLUA __declspec(dllexport)
+#endif
+#else
+#ifdef __linux__
+#define DLLLUA
+#else
+#define DLLLUA __declspec(dllimport)
+#endif
 #endif
 #endif

@@ -9,9 +9,8 @@
 #include <fsys/filesystem.h>
 #include <fsys/fsys_searchflags.hpp>
 
-namespace Lua
-{
-	DLLLUA StatusCode LoadFile(lua_State *lua,std::string &fInOut,fsys::SearchFlags includeFlags=fsys::SearchFlags::All,fsys::SearchFlags excludeFlags=fsys::SearchFlags::None);
+namespace Lua {
+	DLLLUA StatusCode LoadFile(lua_State *lua, std::string &fInOut, fsys::SearchFlags includeFlags = fsys::SearchFlags::All, fsys::SearchFlags excludeFlags = fsys::SearchFlags::None);
 };
 
 #endif
