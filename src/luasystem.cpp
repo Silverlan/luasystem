@@ -7,6 +7,18 @@
 #include "impl_luajit_definitions.hpp"
 #include <sharedutils/util_string.h>
 
+static void get_file_chunk_name(std::string &fileName)
+{
+	ustring::replace(fileName, "\\", "/");
+	fileName = "@" + fileName;
+}
+static std::string get_file_chunk_name(const std::string &fileName)
+{
+	auto chunkName = fileName;
+	get_file_chunk_name(chunkName);
+	return chunkName;
+}
+
 lua_State *Lua::CreateState()
 {
 	lua_State *lua = luaL_newstate();
@@ -80,6 +92,8 @@ Lua::StatusCode Lua::LoadFile(lua_State *lua, std::string &fInOut, fsys::SearchF
 	auto l = f->GetSize();
 	std::vector<char> buf(l);
 	f->Read(buf.data(), l);
+
+	get_file_chunk_name(nf);
 	return static_cast<StatusCode>(luaL_loadbuffer(lua, buf.data(), l, nf.c_str()));
 }
 
