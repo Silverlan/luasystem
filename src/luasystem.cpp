@@ -449,6 +449,25 @@ void Lua::ExecuteFiles(lua_State *lua, const std::string &subPath, int32_t (*tra
 	}
 }
 
+static void normalize_source(std::string &source)
+{
+	if(source.empty() == false && source[0] == '@')
+		source = source.substr(1);
+}
+
+std::string Lua::get_source(const lua_Debug &dbgInfo)
+{
+	std::string source = dbgInfo.source;
+	normalize_source(source);
+	return source;
+}
+std::string Lua::get_short_source(const lua_Debug &dbgInfo)
+{
+	std::string source = dbgInfo.short_src;
+	normalize_source(source);
+	return source;
+}
+
 std::string Lua::get_current_file(lua_State *l)
 {
 	lua_Debug info;
@@ -456,7 +475,7 @@ std::string Lua::get_current_file(lua_State *l)
 	while(lua_getstack(l, level, &info)) {
 		lua_getinfo(l, "nSl", &info);
 		if(ustring::compare(info.what, "C") == false && info.source != nullptr)
-			return info.source;
+			return get_source(info);
 		++level;
 	}
 	return "";

@@ -52,6 +52,7 @@ extern "C" {
 #define LUA_OK (decltype(LUA_YIELD)(0))
 #endif
 
+struct lua_Debug;
 namespace Lua {
 	enum class DLLLUA StatusCode : decltype(LUA_OK) {
 		Ok = LUA_OK,
@@ -93,6 +94,9 @@ namespace Lua {
 	DLLLUA bool IsString(lua_State *lua, int32_t idx);
 	DLLLUA bool IsTable(lua_State *lua, int32_t idx);
 	DLLLUA bool IsUserData(lua_State *lua, int32_t idx);
+
+	DLLLUA std::string get_source(const lua_Debug &dbgInfo);
+	DLLLUA std::string get_short_source(const lua_Debug &dbgInfo);
 
 	//this won't work. Compiler will emit diffrent symbols.
 	//Might be pre C++20 remnant.
