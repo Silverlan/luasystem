@@ -402,6 +402,8 @@ Lua::StatusCode Lua::ExecuteFile(lua_State *lua, std::string &fInOut, int32_t (*
 {
 	fInOut = FileManager::GetNormalizedPath(fInOut);
 	auto path = GetPathFromFileName(fInOut);
+	if(!path.empty() && (path.front() == '/' || path.front() == '\\'))
+		path = path.substr(1);
 	s_includeStack.push_back(path);
 	auto s = ProtectedCall(
 	  lua, [&fInOut](lua_State *l) { return Lua::LoadFile(l, fInOut); }, numRet, traceback);
