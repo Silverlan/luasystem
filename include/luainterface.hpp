@@ -30,7 +30,7 @@ namespace Lua {
 
 		// These need a const char* which exists for the lifetime of the lua state! (std::string won't work!)
 		luabind::module_ &RegisterLibrary(const char *name, const std::shared_ptr<luabind::module_> &mod);
-		luabind::module_ &RegisterLibrary(const char *name, const std::unordered_map<std::string, int (*)(lua_State *)> &functions = {});
+        luabind::module_ &RegisterLibrary(const char *name, const std::unordered_map<std::string, int (*)(lua_State *)> &functions = {});
 	  protected:
 		lua_State *m_state = nullptr;
 		std::string m_identifier;

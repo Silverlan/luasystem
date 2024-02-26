@@ -18,7 +18,11 @@ void Lua::Interface::Open()
 {
 	if(m_state != nullptr)
 		return;
-	m_state = lua_open();
+#ifdef USE_LUAJIT
+    m_state = lua_open();
+#else
+    m_state = luaL_newstate();
+#endif
 }
 
 std::vector<std::string> &Lua::Interface::GetIncludeCache() { return m_luaIncludeCache; }
@@ -62,7 +66,8 @@ luabind::module_ &Lua::Interface::RegisterLibrary(const char *name, const std::u
 				regFuncs.push_back({pair.first.c_str(), pair.second});
 			regFuncs.push_back({nullptr, nullptr});
 #pragma warning(disable : 4309)
-			luaL_newlib(m_state, regFuncs.data());
+            lua_newtable(m_state);
+            luaL_setfuncs(m_state, regFuncs.data(), 0);
 #pragma warning(default : 4309)
 			lua_setglobal(m_state, name);
 		}

@@ -7,6 +7,7 @@
 #include "impl_luajit_definitions.hpp"
 #include <sharedutils/util_string.h>
 
+
 static void get_file_chunk_name(std::string &fileName)
 {
 	ustring::replace(fileName, "\\", "/");
@@ -238,16 +239,43 @@ void Lua::RegisterEnum(lua_State *l, const std::string &name, int32_t val)
 	lua_setglobal(l, name.c_str());
 }
 
-std::shared_ptr<luabind::module_> Lua::RegisterLibrary(lua_State *l, const std::string &name, const std::vector<luaL_Reg> &functions)
+#if 0
+std::shared_ptr<luabind::module_> Lua::RegisterLibrary(lua_State *l, const std::string &name,const std::vector<luaL_Reg>& functions)
 {
-	auto fCpy = functions;
+    auto funcSize = functions.size();
+#if 1
+   auto fCpy = functions;
+   fCpy.resize(funcSize);
 	if(functions.empty() || functions.back().name != nullptr)
-		fCpy.push_back({nullptr, nullptr});
+        fCpy.push_back({nullptr,nullptr});
 #pragma warning(disable : 4309)
-	luaL_newlib(l, fCpy.data());
+    luaL_newlib(l, fCpy.data());
 #pragma warning(default : 4309)
+#endif
+#if 0
+    luaL_Reg fCpy[funcSize+1];
+    std::memcpy(fCpy,functions.data(),funcSize);
+    if(functions.empty() || functions.back().name != nullptr)
+        fCpy[funcSize] = {nullptr,nullptr};
+#pragma warning(disable : 4309)
+    luaL_newlib(l, fCpy);
+#pragma warning(default : 4309)
+#endif
 	lua_setglobal(l, name.c_str());
 	return std::make_shared<luabind::module_>(luabind::module(l, name.c_str()));
+}
+#endif
+std::shared_ptr<luabind::module_> Lua::RegisterLibrary(lua_State *l, const std::string &name, const std::vector<luaL_Reg> &functions)
+{
+    auto fCpy = functions;
+    if(functions.empty() || functions.back().name != nullptr)
+        fCpy.push_back({nullptr, nullptr});
+#pragma warning(disable : 4309)
+    lua_newtable(l);
+    luaL_setfuncs(l, fCpy.data(), 0);
+#pragma warning(default : 4309)
+    lua_setglobal(l, name.c_str());
+    return std::make_shared<luabind::module_>(luabind::module(l, name.c_str()));
 }
 int32_t Lua::CreateReference(lua_State *lua, int32_t t) { return luaL_ref(lua, t); }
 void Lua::ReleaseReference(lua_State *lua, int32_t ref, int32_t t) { luaL_unref(lua, t, ref); }

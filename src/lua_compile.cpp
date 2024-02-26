@@ -27,7 +27,7 @@ bool Lua::compile_file(lua_State *l, const std::string &path)
 #ifdef USE_LUAJIT
 	lua_dump_strip(l, (lua_Writer)luaWriteBinary, &buf, 1);
 #else
-	lua_dump(l, (lua_Writer)luaWriteBinary, &buf, 1);
+    lua_dump(l, (lua_Writer)luaWriteBinary, &buf);
 #endif
 	fLuaCompile = nullptr;
 	return true;
