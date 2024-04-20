@@ -69,13 +69,13 @@ void Lua::get_global_nested_library(lua_State *l, const std::string &name)
 Lua::StatusCode Lua::LoadFile(lua_State *lua, std::string &fInOut, fsys::SearchFlags includeFlags, fsys::SearchFlags excludeFlags)
 {
 	if(s_precompiledFilesEnabled) {
-		if(fInOut.length() > 3 && fInOut.substr(fInOut.length() - 4) == ".lua") {
-			auto cpath = fInOut.substr(0, fInOut.length() - 4) + ".clua";
-			if(FileManager::Exists("lua\\" + cpath, includeFlags, excludeFlags) == true)
+		if(fInOut.length() > 3 && fInOut.substr(fInOut.length() - 4) == DOT_FILE_EXTENSION) {
+			auto cpath = fInOut.substr(0, fInOut.length() - 4) + DOT_FILE_EXTENSION_PRECOMPILED;
+			if(FileManager::Exists(SCRIPT_DIRECTORY_SLASH + cpath, includeFlags, excludeFlags) == true)
 				fInOut = cpath;
 		}
 	}
-	fInOut = FileManager::GetNormalizedPath("lua\\" + fInOut);
+	fInOut = FileManager::GetNormalizedPath(SCRIPT_DIRECTORY_SLASH + fInOut);
 	auto f = FileManager::OpenFile(fInOut.c_str(), "rb", includeFlags, excludeFlags);
 	if(f == nullptr) {
 		lua_pushfstring(lua, "cannot open %s: File not found!", fInOut.c_str());
@@ -422,27 +422,27 @@ Lua::StatusCode Lua::RunString(lua_State *lua, const std::string &str, const std
 
 void Lua::ExecuteFiles(lua_State *lua, const std::string &subPath, int32_t (*traceback)(lua_State *), const std::function<void(StatusCode, const std::string &)> &fCallback)
 {
-	std::string path = "lua\\";
+	std::string path = SCRIPT_DIRECTORY_SLASH;
 	path += subPath;
 
 	std::vector<std::string> files;
 	if(s_precompiledFilesEnabled)
-		FileManager::FindFiles((path + "*.clua").c_str(), &files, nullptr);
+		FileManager::FindFiles((path + "*." +FILE_EXTENSION_PRECOMPILED).c_str(), &files, nullptr);
 
 	if(s_precompiledFilesEnabled) {
 		// Add un-compiled lua-files, but only if no compiled version exists
 		std::vector<std::string> rFiles;
-		FileManager::FindFiles((path + "*.lua").c_str(), &rFiles, nullptr);
+		FileManager::FindFiles((path + "*." +FILE_EXTENSION).c_str(), &rFiles, nullptr);
 		files.reserve(files.size() + rFiles.size());
 		for(auto &fName : rFiles) {
-			auto lname = fName.substr(0, fName.length() - 3) + "clua";
+			auto lname = fName.substr(0, fName.length() - 3) + FILE_EXTENSION_PRECOMPILED;
 			auto it = std::find(files.begin(), files.end(), lname);
 			if(it == files.end())
 				files.push_back(fName);
 		}
 	}
 	else
-		FileManager::FindFiles((path + "*.lua").c_str(), &files, nullptr);
+		FileManager::FindFiles((path + "*." +FILE_EXTENSION).c_str(), &files, nullptr);
 
 	for(auto &f : files) {
 		auto path = subPath + f;
