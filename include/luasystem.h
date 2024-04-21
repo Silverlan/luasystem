@@ -70,6 +70,13 @@ namespace Lua {
 	};
 	enum class DLLLUA Type : decltype(LUA_TNONE) { None = LUA_TNONE, Nil = LUA_TNIL, Bool = LUA_TBOOLEAN, LightUserData = LUA_TLIGHTUSERDATA, Number = LUA_TNUMBER, String = LUA_TSTRING, Table = LUA_TTABLE, Function = LUA_TFUNCTION, UserData = LUA_TUSERDATA, Thread = LUA_TTHREAD };
 
+	constexpr std::string SCRIPT_DIRECTORY = "lua";
+	constexpr std::string SCRIPT_DIRECTORY_SLASH = "lua/";
+	constexpr std::string FILE_EXTENSION = "lua";
+	constexpr std::string FILE_EXTENSION_PRECOMPILED = "luac";
+	constexpr std::string DOT_FILE_EXTENSION = ".lua";
+	constexpr std::string DOT_FILE_EXTENSION_PRECOMPILED = ".luac";
+
 	template<typename T>
 	using base_type = typename std::remove_cv_t<std::remove_pointer_t<std::remove_reference_t<T>>>;
 	template<typename T>
