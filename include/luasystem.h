@@ -60,8 +60,10 @@ namespace Lua {
 		ErrorRun = LUA_ERRRUN,
 		ErrorSyntax = LUA_ERRSYNTAX,
 		ErrorMemory = LUA_ERRMEM,
+#if 0
 #ifndef USE_LUAJIT
 		ErrorGC = LUA_ERRGCMM,
+#endif
 #endif
 		ErrorErrorHandler = LUA_ERRERR,
 		ErrorFile = LUA_ERRFILE
@@ -201,7 +203,7 @@ namespace Lua {
 	DLLLUA void Error(lua_State *lua, const std::string &err);
 	DLLLUA void Register(lua_State *lua, const char *name, lua_CFunction f);
 	DLLLUA void RegisterEnum(lua_State *l, const std::string &name, int32_t val);
-	DLLLUA std::shared_ptr<luabind::module_> RegisterLibrary(lua_State *lua, const std::string &name, const std::vector<luaL_Reg> &functions);
+    DLLLUA std::shared_ptr<luabind::module_> RegisterLibrary(lua_State *lua, const std::string &name,const std::vector<luaL_Reg>& functions);
 	// Creates a reference of the object at the stack top and pops it
 	DLLLUA int32_t CreateReference(lua_State *lua, int32_t t = RegistryIndex);
 	DLLLUA void ReleaseReference(lua_State *lua, int32_t ref, int32_t t = RegistryIndex);

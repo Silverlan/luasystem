@@ -8,7 +8,7 @@
 //#define LUABIND_NO_EXCEPTIONS
 #define LUABIND_DYNAMIC_LINK
 
-#define USE_LUAJIT
+//#define USE_LUAJIT
 
 #ifdef DLLLUA_EX
 #ifdef __linux__

@@ -56,18 +56,20 @@ set(CMAKE_CXX_STANDARD 20)
 set(ENABLE_STATIC_LIBRARY_FLAG 0)
 # set(PRECOMPILED_HEADER "stdafx")
 
+option(CONFIG_USE_LUAJIT "Use LuaJIT." ON)
 link_external_library(sharedutils)
 link_external_library(mathutil)
 link_external_library(vfilesystem)
 link_external_library(LuaJIT)
+
 if(WIN32)
 	add_external_library(lua)
 endif()
+
 link_external_library(luabind)
 
 add_include_dir(boost)
 
-option(CONFIG_USE_LUAJIT "Use LuaJIT." ON)
 
 set(DEFINITIONS
 	DLLLUA_EX
@@ -75,8 +77,12 @@ set(DEFINITIONS
 	BOOST_ALL_DYN_LINK
 )
 
+#TODO: We both use luajit regardless of JIT.
 if(CONFIG_USE_LUAJIT)
 	list(APPEND DEFINITIONS USE_LUAJIT)
+	set(LUAJIT_DISABLE_JIT OFF CACHE BOOL "Disable the JIT compiler" FORCE)
+else()
+	set(LUAJIT_DISABLE_JIT ON CACHE BOOL "Disable the JIT compiler" FORCE)
 endif()
 
 ##### CONFIGURATION #####
