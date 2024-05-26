@@ -7,7 +7,7 @@ pr_add_library(${PROJ_NAME} SHARED)
 
 #TODO: We both use luajit regardless of JIT.
 if(CONFIG_USE_LUAJIT)
-	pr_add_compile_definitions(${PROJ_NAME} -DUSE_LUAJIT)
+	pr_add_compile_definitions(${PROJ_NAME} -DUSE_LUAJIT PUBLIC)
 	set(LUAJIT_DISABLE_JIT OFF CACHE BOOL "Disable the JIT compiler" FORCE)
 else()
 	set(LUAJIT_DISABLE_JIT ON CACHE BOOL "Disable the JIT compiler" FORCE)
