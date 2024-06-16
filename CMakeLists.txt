@@ -14,11 +14,11 @@ else()
 endif()
 
 pr_add_dependency(${PROJ_NAME} vfilesystem TARGET PUBLIC)
+pr_add_dependency(${PROJ_NAME} luabind TARGET PUBLIC)
 if(WIN32)
 	pr_add_external_dependency(${PROJ_NAME} lua LIBRARY PUBLIC)
 endif()
 pr_add_external_dependency(${PROJ_NAME} LuaJIT LIBRARY PUBLIC)
-pr_add_external_dependency(${PROJ_NAME} luabind LIBRARY PUBLIC)
 
 pr_add_headers(${PROJ_NAME} "include/")
 pr_add_sources(${PROJ_NAME} "src/")
