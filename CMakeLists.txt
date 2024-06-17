@@ -22,6 +22,7 @@ endif()
 pr_add_headers(${PROJ_NAME} "include/")
 pr_add_sources(${PROJ_NAME} "src/")
 
-pr_add_compile_definitions(${PROJ_NAME} -DDLLLUA_EX -DLUABIND_DYNAMIC_LINK)
+pr_add_compile_definitions(${PROJ_NAME} -DLUABIND_DYNAMIC_LINK PUBLIC)
+pr_add_compile_definitions(${PROJ_NAME} -DDLLLUA_EX)
 
 pr_finalize(${PROJ_NAME})
