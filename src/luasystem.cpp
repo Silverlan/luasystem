@@ -7,7 +7,6 @@
 #include "impl_luajit_definitions.hpp"
 #include <sharedutils/util_string.h>
 
-
 static void get_file_chunk_name(std::string &fileName)
 {
 	ustring::replace(fileName, "\\", "/");
@@ -77,9 +76,10 @@ Lua::StatusCode Lua::LoadFile(lua_State *lua, std::string &fInOut, fsys::SearchF
 		}
 	}
 	fInOut = FileManager::GetNormalizedPath(SCRIPT_DIRECTORY_SLASH + fInOut);
-	auto f = FileManager::OpenFile(fInOut.c_str(), "rb", includeFlags, excludeFlags);
+	std::string err;
+	auto f = FileManager::OpenFile(fInOut.c_str(), "rb", &err, includeFlags, excludeFlags);
 	if(f == nullptr) {
-		lua_pushfstring(lua, "cannot open %s: File not found!", fInOut.c_str());
+		lua_pushfstring(lua, ("cannot open %s: " + (!err.empty() ? err : "File not found")).c_str(), fInOut.c_str());
 		return StatusCode::ErrorFile;
 	}
 	auto nf = fInOut;
@@ -267,15 +267,15 @@ std::shared_ptr<luabind::module_> Lua::RegisterLibrary(lua_State *l, const std::
 #endif
 std::shared_ptr<luabind::module_> Lua::RegisterLibrary(lua_State *l, const std::string &name, const std::vector<luaL_Reg> &functions)
 {
-    auto fCpy = functions;
-    if(functions.empty() || functions.back().name != nullptr)
-        fCpy.push_back({nullptr, nullptr});
+	auto fCpy = functions;
+	if(functions.empty() || functions.back().name != nullptr)
+		fCpy.push_back({nullptr, nullptr});
 #pragma warning(disable : 4309)
-    lua_newtable(l);
-    luaL_setfuncs(l, fCpy.data(), 0);
+	lua_newtable(l);
+	luaL_setfuncs(l, fCpy.data(), 0);
 #pragma warning(default : 4309)
-    lua_setglobal(l, name.c_str());
-    return std::make_shared<luabind::module_>(luabind::module(l, name.c_str()));
+	lua_setglobal(l, name.c_str());
+	return std::make_shared<luabind::module_>(luabind::module(l, name.c_str()));
 }
 int32_t Lua::CreateReference(lua_State *lua, int32_t t) { return luaL_ref(lua, t); }
 void Lua::ReleaseReference(lua_State *lua, int32_t ref, int32_t t) { luaL_unref(lua, t, ref); }
@@ -455,12 +455,12 @@ void Lua::ExecuteFiles(lua_State *lua, const std::string &subPath, int32_t (*tra
 
 	std::vector<std::string> files;
 	if(s_precompiledFilesEnabled)
-		FileManager::FindFiles((path + "*." +FILE_EXTENSION_PRECOMPILED).c_str(), &files, nullptr);
+		FileManager::FindFiles((path + "*." + FILE_EXTENSION_PRECOMPILED).c_str(), &files, nullptr);
 
 	if(s_precompiledFilesEnabled) {
 		// Add un-compiled lua-files, but only if no compiled version exists
 		std::vector<std::string> rFiles;
-		FileManager::FindFiles((path + "*." +FILE_EXTENSION).c_str(), &rFiles, nullptr);
+		FileManager::FindFiles((path + "*." + FILE_EXTENSION).c_str(), &rFiles, nullptr);
 		files.reserve(files.size() + rFiles.size());
 		for(auto &fName : rFiles) {
 			auto lname = fName.substr(0, fName.length() - 3) + FILE_EXTENSION_PRECOMPILED;
@@ -470,7 +470,7 @@ void Lua::ExecuteFiles(lua_State *lua, const std::string &subPath, int32_t (*tra
 		}
 	}
 	else
-		FileManager::FindFiles((path + "*." +FILE_EXTENSION).c_str(), &files, nullptr);
+		FileManager::FindFiles((path + "*." + FILE_EXTENSION).c_str(), &files, nullptr);
 
 	for(auto &f : files) {
 		auto path = subPath + f;
