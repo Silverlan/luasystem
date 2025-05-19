@@ -6,7 +6,9 @@
 #define __LUADEFINITIONS_H__
 
 //#define LUABIND_NO_EXCEPTIONS
+#ifndef LUABIND_DYNAMIC_LINK
 #define LUABIND_DYNAMIC_LINK
+#endif
 
 //#define USE_LUAJIT
 
