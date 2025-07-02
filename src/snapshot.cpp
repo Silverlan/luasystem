@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: © 2019 Silverlan <opensource@pragma-engine.com>
-// SPDX-FileCopyrightText: © 2012 codingow.com
+// SPDX-FileCopyrightText: (c) 2019 Silverlan <opensource@pragma-engine.com>
+// SPDX-FileCopyrightText: (c) 2012 codingow.com
 // SPDX-License-Identifier: MIT
 
 #include "luasystem_file.h"
