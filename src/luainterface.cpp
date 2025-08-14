@@ -4,6 +4,21 @@
 #include "luainterface.hpp"
 #include "luasystem.h"
 #include "impl_luajit_definitions.hpp"
+#include <sharedutils/util_string.h>
+#include <sharedutils/util_path.hpp>
+
+bool Lua::IncludeCache::Contains(const std::string_view &path) const {
+	// TODO: It would be more efficient to generate a path-hash directly instead of copying the string
+	auto hash = ustring::string_switch_ci::hash(util::FilePath(path).GetString());
+	return m_cache.contains(hash);
+}
+void Lua::IncludeCache::Add(const std::string_view &path) {
+	auto hash = ustring::string_switch_ci::hash(util::FilePath(path).GetString());
+	m_cache.insert(hash);
+}
+void Lua::IncludeCache::Clear() {
+	m_cache.clear();
+}
 
 Lua::Interface::Interface() {}
 
@@ -24,7 +39,7 @@ void Lua::Interface::Open()
 #endif
 }
 
-std::vector<std::string> &Lua::Interface::GetIncludeCache() { return m_luaIncludeCache; }
+Lua::IncludeCache &Lua::Interface::GetIncludeCache() { return m_luaIncludeCache; }
 
 void Lua::Interface::SetIdentifier(const std::string &identifier) { m_identifier = identifier; }
 const std::string &Lua::Interface::GetIdentifier() const { return m_identifier; }

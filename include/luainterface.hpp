@@ -6,6 +6,7 @@
 
 #include "luadefinitions.h"
 #include <memory>
+#include <unordered_set>
 #include <unordered_map>
 #include <string>
 #include <vector>
@@ -15,6 +16,14 @@ namespace luabind {
 	class module_;
 };
 namespace Lua {
+	struct DLLLUA IncludeCache {
+		bool Contains(const std::string_view &path) const;
+		void Add(const std::string_view &path);
+		void Clear();
+	private:
+		std::unordered_set<uint32_t> m_cache;
+	};
+
 	class DLLLUA Interface {
 	  public:
 		Interface();
@@ -25,7 +34,7 @@ namespace Lua {
 
 		void SetIdentifier(const std::string &identifier);
 		const std::string &GetIdentifier() const;
-		std::vector<std::string> &GetIncludeCache();
+		IncludeCache &GetIncludeCache();
 
 		// These need a const char* which exists for the lifetime of the lua state! (std::string won't work!)
 		luabind::module_ &RegisterLibrary(const char *name, const std::shared_ptr<luabind::module_> &mod);
@@ -34,7 +43,7 @@ namespace Lua {
 		lua_State *m_state = nullptr;
 		std::string m_identifier;
 		std::unordered_map<std::string, std::shared_ptr<luabind::module_>> m_modules;
-		std::vector<std::string> m_luaIncludeCache;
+		IncludeCache m_luaIncludeCache;
 	};
 };
 
