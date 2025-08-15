@@ -86,8 +86,8 @@ namespace Lua {
 	DLLLUA void CloseState(lua_State *lua);
 	DLLLUA void Call(lua_State *lua, int32_t nargs, int32_t nresults);
 	// Function and function arguments have to be pushed inside 'pushFuncArgs'-callback!
-	DLLLUA StatusCode ProtectedCall(lua_State *lua, const std::function<StatusCode(lua_State *)> &pushFuncArgs, int32_t numResults, int32_t (*traceback)(lua_State *) = nullptr, void (*pushArgErrorHandler)(lua_State *, StatusCode) = nullptr);
-	DLLLUA StatusCode ProtectedCall(lua_State *lua, int32_t nargs, int32_t nresults, int32_t (*traceback)(lua_State *) = nullptr, void (*pushArgErrorHandler)(lua_State *, StatusCode) = nullptr);
+	DLLLUA StatusCode ProtectedCall(lua_State *lua, const std::function<StatusCode(lua_State *)> &pushFuncArgs, int32_t numResults, std::string &outErr, int32_t (*traceback)(lua_State *) = nullptr, void (*pushArgErrorHandler)(lua_State *, StatusCode) = nullptr);
+	DLLLUA StatusCode ProtectedCall(lua_State *lua, int32_t nargs, int32_t nresults, std::string &outErr, int32_t (*traceback)(lua_State *) = nullptr, void (*pushArgErrorHandler)(lua_State *, StatusCode) = nullptr);
 	// Creates a new table and pushes it onto the stack.
 	DLLLUA int32_t CreateTable(lua_State *lua);
 	DLLLUA int32_t CreateMetaTable(lua_State *lua, const std::string &tname);
@@ -249,13 +249,13 @@ namespace Lua {
 
 	DLLLUA void CollectGarbage(lua_State *lua);
 
-	DLLLUA StatusCode ExecuteFile(lua_State *lua, std::string &fInOut, int32_t (*traceback)(lua_State *) = nullptr, int32_t numRet = 0, void (*loadErrorHandler)(lua_State *, StatusCode) = nullptr);
-	DLLLUA StatusCode IncludeFile(lua_State *lua, std::string &fInOut, int32_t (*traceback)(lua_State *) = nullptr, int32_t numRet = 0, void (*loadErrorHandler)(lua_State *, StatusCode) = nullptr);
+	DLLLUA StatusCode ExecuteFile(lua_State *lua, std::string &fInOut, std::string &outErr, int32_t (*traceback)(lua_State *) = nullptr, int32_t numRet = 0, void (*loadErrorHandler)(lua_State *, StatusCode) = nullptr);
+	DLLLUA StatusCode IncludeFile(lua_State *lua, std::string &fInOut, std::string &outErr, int32_t (*traceback)(lua_State *) = nullptr, int32_t numRet = 0, void (*loadErrorHandler)(lua_State *, StatusCode) = nullptr);
 	DLLLUA std::string GetIncludePath();
 	DLLLUA std::string GetIncludePath(const std::string &f);
-	DLLLUA StatusCode RunString(lua_State *lua, const std::string &str, int32_t retCount, const std::string &chunkName, int32_t (*traceback)(lua_State *) = nullptr, void (*loadErrorHandler)(lua_State *, StatusCode) = nullptr);
-	DLLLUA StatusCode RunString(lua_State *lua, const std::string &str, const std::string &chunkName, int32_t (*traceback)(lua_State *) = nullptr, void (*loadErrorHandler)(lua_State *, StatusCode) = nullptr);
-	DLLLUA void ExecuteFiles(lua_State *lua, const std::string &subPath, int32_t (*traceback)(lua_State *) = nullptr, const std::function<void(StatusCode, const std::string &)> &fCallback = nullptr);
+	DLLLUA StatusCode RunString(lua_State *lua, const std::string &str, int32_t retCount, const std::string &chunkName, std::string &outErr, int32_t (*traceback)(lua_State *) = nullptr, void (*loadErrorHandler)(lua_State *, StatusCode) = nullptr);
+	DLLLUA StatusCode RunString(lua_State *lua, const std::string &str, const std::string &chunkName, std::string &outErr, int32_t (*traceback)(lua_State *) = nullptr, void (*loadErrorHandler)(lua_State *, StatusCode) = nullptr);
+	DLLLUA void ExecuteFiles(lua_State *lua, const std::string &subPath, std::string &outErr, int32_t (*traceback)(lua_State *) = nullptr, const std::function<void(StatusCode, const std::string &)> &fCallback = nullptr);
 	DLLLUA const char *GetTypeString(lua_State *l, int32_t n);
 	DLLLUA luabind::weak_ref CreateWeakReference(const luabind::object &o);
 	DLLLUA void PushWeakReference(const luabind::weak_ref &ref);

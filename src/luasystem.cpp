@@ -99,11 +99,16 @@ Lua::StatusCode Lua::LoadFile(lua_State *lua, std::string &fInOut, fsys::SearchF
 
 void Lua::Call(lua_State *lua, int32_t nargs, int32_t nresults) { lua_call(lua, nargs, nresults); }
 
-static Lua::StatusCode protected_call(lua_State *lua, const std::function<Lua::StatusCode(lua_State *)> &pushArgs, int32_t numArgs, int32_t numResults, int32_t (*traceback)(lua_State *), void (*pushArgErrorHandler)(lua_State *, Lua::StatusCode))
+static Lua::StatusCode protected_call(lua_State *lua, const std::function<Lua::StatusCode(lua_State *)> &pushArgs, int32_t numArgs, int32_t numResults, std::string &outErr, int32_t (*traceback)(lua_State *), void (*pushArgErrorHandler)(lua_State *, Lua::StatusCode))
 {
 	int32_t tracebackIdx = 0;
 	if(traceback != nullptr) {
 		tracebackIdx = Lua::GetStackTop(lua) -numArgs +1;
+		if (!pushArgs) {
+			// In this case the function has already been pushed onto the stack and we have to
+			// push the traceback function before it
+			--tracebackIdx;
+		}
 		lua_pushcfunction(lua, traceback);
 		lua_insert(lua, tracebackIdx);
 	}
@@ -124,6 +129,9 @@ static Lua::StatusCode protected_call(lua_State *lua, const std::function<Lua::S
 			auto newTop = Lua::GetStackTop(lua);
 			if(newTop > top)
 				Lua::Pop(lua, newTop - top);
+
+			outErr = Lua::CheckString(lua, -1);
+			Lua::Pop(lua);
 			return static_cast<Lua::StatusCode>(s);
 		}
 		// pushArgs pushes both the arguments AND the function itself, so
@@ -135,16 +143,21 @@ static Lua::StatusCode protected_call(lua_State *lua, const std::function<Lua::S
 	auto r = lua_pcall(lua, numArgs, numResults, tracebackIdx);
 	if(traceback != nullptr)
 		Lua::RemoveValue(lua, tracebackIdx);
-	return static_cast<Lua::StatusCode>(r);
+	auto statusCode = static_cast<Lua::StatusCode>(r);
+	if (statusCode != Lua::StatusCode::Ok) {
+		outErr = Lua::CheckString(lua, -1);
+		Lua::Pop(lua);
+	}
+	return statusCode;
 }
 
-Lua::StatusCode Lua::ProtectedCall(lua_State *lua, const std::function<StatusCode(lua_State *)> &pushArgs, int32_t numResults, int32_t (*traceback)(lua_State *), void (*pushArgErrorHandler)(lua_State *, StatusCode))
+Lua::StatusCode Lua::ProtectedCall(lua_State *lua, const std::function<StatusCode(lua_State *)> &pushArgs, int32_t numResults, std::string &outErr, int32_t (*traceback)(lua_State *), void (*pushArgErrorHandler)(lua_State *, StatusCode))
 {
-	return protected_call(lua, pushArgs, 0, numResults, traceback, pushArgErrorHandler);
+	return protected_call(lua, pushArgs, 0, numResults, outErr, traceback, pushArgErrorHandler);
 }
-Lua::StatusCode Lua::ProtectedCall(lua_State *lua, int32_t nargs, int32_t nresults, int32_t (*traceback)(lua_State *), void (*pushArgErrorHandler)(lua_State *, StatusCode))
+Lua::StatusCode Lua::ProtectedCall(lua_State *lua, int32_t nargs, int32_t nresults, std::string &outErr, int32_t (*traceback)(lua_State *), void (*pushArgErrorHandler)(lua_State *, StatusCode))
 {
-	return protected_call(lua, nullptr, nargs, nresults, traceback, pushArgErrorHandler);
+	return protected_call(lua, nullptr, nargs, nresults, outErr, traceback, pushArgErrorHandler);
 }
 
 int32_t Lua::CreateTable(lua_State *lua)
@@ -212,7 +225,7 @@ bool Lua::PushLuaFunctionFromString(lua_State *l, const std::string &luaFunction
 		Lua::Pop(l); /* 0 */
 		return false;
 	}
-	if(Lua::ProtectedCall(l, 0, 1) != Lua::StatusCode::Ok) {
+	if(Lua::ProtectedCall(l, 0, 1, outErrMsg) != Lua::StatusCode::Ok) {
 		Lua::Pop(l); /* 0 */
 		return false;
 	}
@@ -430,7 +443,7 @@ static std::string GetPathFromFileName(std::string str)
 }
 
 static std::vector<std::string> s_includeStack;
-Lua::StatusCode Lua::ExecuteFile(lua_State *lua, std::string &fInOut, int32_t (*traceback)(lua_State *), int32_t numRet, void (*loadErrorHandler)(lua_State *, StatusCode))
+Lua::StatusCode Lua::ExecuteFile(lua_State *lua, std::string &fInOut, std::string &outErr, int32_t (*traceback)(lua_State *), int32_t numRet, void (*loadErrorHandler)(lua_State *, StatusCode))
 {
 	fInOut = FileManager::GetNormalizedPath(fInOut);
 	auto path = GetPathFromFileName(fInOut);
@@ -440,21 +453,20 @@ Lua::StatusCode Lua::ExecuteFile(lua_State *lua, std::string &fInOut, int32_t (*
 	auto s = ProtectedCall(
 	  lua, [&fInOut](lua_State *l) {
 	  	return Lua::LoadFile(l, fInOut);
-	  }, numRet, traceback, loadErrorHandler);
+	  }, numRet, outErr, traceback, loadErrorHandler);
 	s_includeStack.pop_back();
-	return static_cast<StatusCode>(s);
+	return s;
 }
 
-Lua::StatusCode Lua::RunString(lua_State *lua, const std::string &str, int32_t retCount, const std::string &chunkName, int32_t (*traceback)(lua_State *), void (*loadErrorHandler)(lua_State *, StatusCode))
+Lua::StatusCode Lua::RunString(lua_State *lua, const std::string &str, int32_t retCount, const std::string &chunkName, std::string &outErr, int32_t (*traceback)(lua_State *), void (*loadErrorHandler)(lua_State *, StatusCode))
 {
-	auto s = ProtectedCall(
-	  lua, [&str, &chunkName](lua_State *l) { return static_cast<StatusCode>(luaL_loadbuffer(l, str.c_str(), str.length(), chunkName.c_str())); }, retCount, traceback, loadErrorHandler);
-	return static_cast<StatusCode>(s);
+	return ProtectedCall(
+	  lua, [&str, &chunkName](lua_State *l) { return static_cast<StatusCode>(luaL_loadbuffer(l, str.c_str(), str.length(), chunkName.c_str())); }, retCount, outErr, traceback, loadErrorHandler);
 }
 
-Lua::StatusCode Lua::RunString(lua_State *lua, const std::string &str, const std::string &chunkName, int32_t (*traceback)(lua_State *), void (*loadErrorHandler)(lua_State *, StatusCode)) { return RunString(lua, str, 0, chunkName, traceback, loadErrorHandler); }
+Lua::StatusCode Lua::RunString(lua_State *lua, const std::string &str, const std::string &chunkName, std::string &outErr, int32_t (*traceback)(lua_State *), void (*loadErrorHandler)(lua_State *, StatusCode)) { return RunString(lua, str, 0, chunkName, outErr, traceback, loadErrorHandler); }
 
-void Lua::ExecuteFiles(lua_State *lua, const std::string &subPath, int32_t (*traceback)(lua_State *), const std::function<void(StatusCode, const std::string &)> &fCallback)
+void Lua::ExecuteFiles(lua_State *lua, const std::string &subPath, std::string &outErr, int32_t (*traceback)(lua_State *), const std::function<void(StatusCode, const std::string &)> &fCallback)
 {
 	std::string path = SCRIPT_DIRECTORY_SLASH;
 	path += subPath;
@@ -481,7 +493,7 @@ void Lua::ExecuteFiles(lua_State *lua, const std::string &subPath, int32_t (*tra
 	for(auto &f : files) {
 		auto path = subPath + f;
 		if(fCallback != nullptr)
-			fCallback(ExecuteFile(lua, path, traceback), path);
+			fCallback(ExecuteFile(lua, path, outErr, traceback), path);
 	}
 }
 
@@ -527,10 +539,10 @@ std::string Lua::GetIncludePath(const std::string &f)
 
 std::string Lua::GetIncludePath() { return GetIncludePath(""); }
 
-Lua::StatusCode Lua::IncludeFile(lua_State *lua, std::string &fInOut, int32_t (*traceback)(lua_State *), int32_t numRet, void (*loadErrorHandler)(lua_State *, StatusCode))
+Lua::StatusCode Lua::IncludeFile(lua_State *lua, std::string &fInOut, std::string &outErr, int32_t (*traceback)(lua_State *), int32_t numRet, void (*loadErrorHandler)(lua_State *, StatusCode))
 {
 	fInOut = GetIncludePath(fInOut);
-	return ExecuteFile(lua, fInOut, traceback, numRet);
+	return ExecuteFile(lua, fInOut, outErr, traceback, numRet);
 }
 
 const char *Lua::GetTypeString(lua_State *l, int32_t n)
