@@ -7,18 +7,18 @@
 #include <sharedutils/util_string.h>
 #include <sharedutils/util_path.hpp>
 
-bool Lua::IncludeCache::Contains(const std::string_view &path) const {
+bool Lua::IncludeCache::Contains(const std::string_view &path) const
+{
 	// TODO: It would be more efficient to generate a path-hash directly instead of copying the string
 	auto hash = ustring::string_switch_ci::hash(util::FilePath(path).GetString());
 	return m_cache.contains(hash);
 }
-void Lua::IncludeCache::Add(const std::string_view &path) {
+void Lua::IncludeCache::Add(const std::string_view &path)
+{
 	auto hash = ustring::string_switch_ci::hash(util::FilePath(path).GetString());
 	m_cache.insert(hash);
 }
-void Lua::IncludeCache::Clear() {
-	m_cache.clear();
-}
+void Lua::IncludeCache::Clear() { m_cache.clear(); }
 
 Lua::Interface::Interface() {}
 
@@ -33,9 +33,9 @@ void Lua::Interface::Open()
 	if(m_state != nullptr)
 		return;
 #ifdef USE_LUAJIT
-    m_state = lua_open();
+	m_state = lua_open();
 #else
-    m_state = luaL_newstate();
+	m_state = luaL_newstate();
 #endif
 }
 
@@ -80,8 +80,8 @@ luabind::module_ &Lua::Interface::RegisterLibrary(const char *name, const std::u
 				regFuncs.push_back({pair.first.c_str(), pair.second});
 			regFuncs.push_back({nullptr, nullptr});
 #pragma warning(disable : 4309)
-            lua_newtable(m_state);
-            luaL_setfuncs(m_state, regFuncs.data(), 0);
+			lua_newtable(m_state);
+			luaL_setfuncs(m_state, regFuncs.data(), 0);
 #pragma warning(default : 4309)
 			lua_setglobal(m_state, name);
 		}

@@ -103,8 +103,8 @@ static Lua::StatusCode protected_call(lua_State *lua, const std::function<Lua::S
 {
 	int32_t tracebackIdx = 0;
 	if(traceback != nullptr) {
-		tracebackIdx = Lua::GetStackTop(lua) -numArgs +1;
-		if (!pushArgs) {
+		tracebackIdx = Lua::GetStackTop(lua) - numArgs + 1;
+		if(!pushArgs) {
 			// In this case the function has already been pushed onto the stack and we have to
 			// push the traceback function before it
 			--tracebackIdx;
@@ -121,7 +121,7 @@ static Lua::StatusCode protected_call(lua_State *lua, const std::function<Lua::S
 			if(traceback || pushArgErrorHandler) {
 				Lua::RemoveValue(lua, tracebackIdx);
 				// pushArgErrorHandler can be used if argument errors should be handled differently
-				if (pushArgErrorHandler)
+				if(pushArgErrorHandler)
 					pushArgErrorHandler(lua, pushArgStatusCode);
 				else
 					traceback(lua);
@@ -144,7 +144,7 @@ static Lua::StatusCode protected_call(lua_State *lua, const std::function<Lua::S
 	if(traceback != nullptr)
 		Lua::RemoveValue(lua, tracebackIdx);
 	auto statusCode = static_cast<Lua::StatusCode>(r);
-	if (statusCode != Lua::StatusCode::Ok) {
+	if(statusCode != Lua::StatusCode::Ok) {
 		outErr = Lua::CheckString(lua, -1);
 		Lua::Pop(lua);
 	}
@@ -450,18 +450,14 @@ Lua::StatusCode Lua::ExecuteFile(lua_State *lua, std::string &fInOut, std::strin
 	if(!path.empty() && (path.front() == '/' || path.front() == '\\'))
 		path = path.substr(1);
 	s_includeStack.push_back(path);
-	auto s = ProtectedCall(
-	  lua, [&fInOut](lua_State *l) {
-	  	return Lua::LoadFile(l, fInOut);
-	  }, numRet, outErr, traceback, loadErrorHandler);
+	auto s = ProtectedCall(lua, [&fInOut](lua_State *l) { return Lua::LoadFile(l, fInOut); }, numRet, outErr, traceback, loadErrorHandler);
 	s_includeStack.pop_back();
 	return s;
 }
 
 Lua::StatusCode Lua::RunString(lua_State *lua, const std::string &str, int32_t retCount, const std::string &chunkName, std::string &outErr, int32_t (*traceback)(lua_State *), void (*loadErrorHandler)(lua_State *, StatusCode))
 {
-	return ProtectedCall(
-	  lua, [&str, &chunkName](lua_State *l) { return static_cast<StatusCode>(luaL_loadbuffer(l, str.c_str(), str.length(), chunkName.c_str())); }, retCount, outErr, traceback, loadErrorHandler);
+	return ProtectedCall(lua, [&str, &chunkName](lua_State *l) { return static_cast<StatusCode>(luaL_loadbuffer(l, str.c_str(), str.length(), chunkName.c_str())); }, retCount, outErr, traceback, loadErrorHandler);
 }
 
 Lua::StatusCode Lua::RunString(lua_State *lua, const std::string &str, const std::string &chunkName, std::string &outErr, int32_t (*traceback)(lua_State *), void (*loadErrorHandler)(lua_State *, StatusCode)) { return RunString(lua, str, 0, chunkName, outErr, traceback, loadErrorHandler); }
