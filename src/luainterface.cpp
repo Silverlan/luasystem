@@ -7,15 +7,23 @@
 #include <sharedutils/util_string.h>
 #include <sharedutils/util_path.hpp>
 
+static std::string get_normalized_path(const std::string_view &path)
+{
+	auto normPath = util::FilePath(path).GetString();
+	if(!normPath.empty() && normPath.front() == '/')
+		normPath.erase(normPath.begin());
+	return normPath;
+}
+
 bool Lua::IncludeCache::Contains(const std::string_view &path) const
 {
 	// TODO: It would be more efficient to generate a path-hash directly instead of copying the string
-	auto hash = ustring::string_switch_ci::hash(util::FilePath(path).GetString());
+	auto hash = ustring::string_switch_ci::hash(get_normalized_path(path));
 	return m_cache.contains(hash);
 }
 void Lua::IncludeCache::Add(const std::string_view &path)
 {
-	auto hash = ustring::string_switch_ci::hash(util::FilePath(path).GetString());
+	auto hash = ustring::string_switch_ci::hash(get_normalized_path(path));
 	m_cache.insert(hash);
 }
 void Lua::IncludeCache::Clear() { m_cache.clear(); }
