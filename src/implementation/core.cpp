@@ -1,10 +1,14 @@
 // SPDX-FileCopyrightText: (c) 2019 Silverlan <opensource@pragma-engine.com>
 // SPDX-License-Identifier: MIT
 
-#include "luasystem_file.h"
-#include <fsys/filesystem.h>
-#include "impl_luajit_definitions.hpp"
-#include <sharedutils/util_string.h>
+module;
+
+#include <memory>
+#include "lua_headers.hpp"
+
+module pragma.lua;
+
+import :core;
 
 static void get_file_chunk_name(std::string &fileName)
 {
@@ -204,7 +208,7 @@ const char *Lua::CheckString(lua_State *lua, int32_t idx) { return luaL_checkstr
 void Lua::CheckType(lua_State *lua, int32_t narg, int32_t t) { luaL_checktype(lua, narg, t); }
 void Lua::CheckTable(lua_State *lua, int32_t narg) { CheckType(lua, narg, LUA_TTABLE); }
 void *Lua::CheckUserData(lua_State *lua, int32_t narg, const std::string &tname) { return luaL_checkudata(lua, narg, tname.c_str()); }
-void Lua::CheckUserData(lua_State *lua, int32_t n) { return luaL_checkuserdata(lua, n); }
+void Lua::CheckUserData(lua_State *lua, int32_t n) { return pragma::lua::core::checkuserdata(lua, n); }
 void Lua::CheckFunction(lua_State *lua, int32_t idx) { luaL_checktype(lua, (idx), LUA_TFUNCTION); }
 void Lua::CheckNil(lua_State *lua, int32_t idx) { luaL_checktype(lua, (idx), LUA_TNIL); }
 void Lua::CheckThread(lua_State *lua, int32_t idx) { luaL_checktype(lua, (idx), LUA_TTHREAD); }
@@ -318,7 +322,7 @@ std::size_t Lua::GetObjectLength(lua_State *l, const luabind::object &o)
 	Pop(l);
 	return len;
 }
-std::size_t Lua::GetObjectLength(lua_State *l, int32_t idx) { return lua_rawlen(l, idx); }
+std::size_t Lua::GetObjectLength(lua_State *l, int32_t idx) { return pragma::lua::core::rawlen(l, idx); }
 
 static Lua::StatusCode get_protected_table_value(lua_State *lua, int32_t idx, int32_t (*f)(lua_State *))
 {

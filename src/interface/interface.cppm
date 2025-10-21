@@ -1,21 +1,20 @@
 // SPDX-FileCopyrightText: (c) 2019 Silverlan <opensource@pragma-engine.com>
 // SPDX-License-Identifier: MIT
 
-#ifndef __LUAINTERFACE_HPP__
-#define __LUAINTERFACE_HPP__
+module;
 
-#include "luadefinitions.h"
+#include "lua_headers.hpp"
 #include <memory>
 #include <unordered_set>
 #include <unordered_map>
 #include <string>
 #include <vector>
 
-struct lua_State;
-namespace luabind {
-	class module_;
-};
-namespace Lua {
+export module pragma.lua:interface;
+
+#undef RegisterLibrary
+
+export namespace Lua {
 	struct DLLLUA IncludeCache {
 		bool Contains(const std::string_view &path) const;
 		void Add(const std::string_view &path);
@@ -46,5 +45,3 @@ namespace Lua {
 		IncludeCache m_luaIncludeCache;
 	};
 };
-
-#endif

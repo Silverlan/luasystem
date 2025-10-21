@@ -16,8 +16,8 @@ pr_add_dependency(${PROJ_NAME} vfilesystem TARGET PUBLIC)
 pr_add_third_party_dependency(${PROJ_NAME} luajit PUBLIC)
 pr_add_dependency(${PROJ_NAME} luabind TARGET PUBLIC)
 
+pr_init_module(${PROJ_NAME})
 pr_add_headers(${PROJ_NAME} "include/")
-pr_add_sources(${PROJ_NAME} "src/")
 
 pr_add_compile_definitions(${PROJ_NAME} -DLUABIND_DYNAMIC_LINK PUBLIC)
 pr_add_compile_definitions(${PROJ_NAME} -DDLLLUA_EX)

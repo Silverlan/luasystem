@@ -2,10 +2,16 @@
 // SPDX-FileCopyrightText: (c) 2012 codingow.com
 // SPDX-License-Identifier: MIT
 
-#include "luasystem_file.h"
-#include <fsys/filesystem.h>
-#include "impl_luajit_definitions.hpp"
-#include <sharedutils/util_string.h>
+module;
+
+#include "lua_headers.hpp"
+#include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
+
+module pragma.lua;
+
+import :core;
 
 static void mark_object(lua_State *L, lua_State *dL, const void * parent, const char * desc);
 
@@ -72,10 +78,6 @@ is_lightcfunction(lua_State *L, int idx) {
 }
 
 #endif
-
-#include <stdbool.h>
-#include <stdio.h>
-#include <string.h>
 
 #define TABLE 1
 #define FUNCTION 2
