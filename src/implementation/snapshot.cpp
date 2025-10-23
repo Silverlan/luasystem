@@ -412,8 +412,7 @@ gen_result(lua_State *L, lua_State *dL) {
 	pdesc(L, dL, THREAD, "thread");
 }
 
-DLLLUA int
-lua_snapshot(lua_State *L) {
+int lua::snapshot(lua_State *L) {
 	int i;
 	lua_State *dL = luaL_newstate();
 	for (i=0;i<MARK;i++) {

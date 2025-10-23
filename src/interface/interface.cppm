@@ -12,6 +12,8 @@ module;
 
 export module pragma.lua:interface;
 
+export import luabind;
+
 #undef RegisterLibrary
 
 export namespace Lua {

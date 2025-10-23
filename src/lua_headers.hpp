@@ -9,7 +9,3 @@ extern "C" {
 #include "lualib.h"
 #include "lauxlib.h"
 }
-
-#include <luabind/luabind.hpp>
-#include <luabind/operator.hpp>
-#include <luabind/detail/conversion_policies/pointer_converter.hpp>

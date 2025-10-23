@@ -4,6 +4,7 @@
 module;
 
 #include "lua_headers.hpp"
+#include <memory>
 
 module pragma.lua;
 
