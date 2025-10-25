@@ -11,7 +11,7 @@ module pragma.lua;
 import :core;
 
 VFilePtrReal fLuaCompile = nullptr;
-static int luaWriteBinary(lua_State *, unsigned char *str, size_t len, struct luaL_Buffer *)
+static int luaWriteBinary(lua_State *, unsigned char *str, size_t len, luaL_Buffer *)
 {
 	fLuaCompile->Write(str, len);
 	return 0;

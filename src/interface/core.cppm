@@ -368,7 +368,7 @@ export namespace lua {
 		Thread = LUA_TTHREAD,
 	};
 
-	inline lua_State *new_state(lua_Alloc f, void *ud) { lua_newstate(f, ud); }
+	inline lua_State *new_state(lua_Alloc f, void *ud) { return lua_newstate(f, ud); }
 	inline void close(lua_State *L) { lua_close(L); }
 	inline lua_State *new_thread(lua_State *L) { return lua_newthread(L); }
 
