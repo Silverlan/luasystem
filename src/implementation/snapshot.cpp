@@ -6,8 +6,6 @@ module;
 
 #include "lua_headers.hpp"
 #include <stdbool.h>
-#include <stdio.h>
-#include <string.h>
 
 module pragma.lua;
 

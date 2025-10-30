@@ -4,11 +4,6 @@
 module;
 
 #include "lua_headers.hpp"
-#include <string>
-#include <unordered_map>
-#include <memory>
-#include <functional>
-#include <stdexcept>
 
 export module pragma.lua:core;
 
