@@ -8,6 +8,7 @@ module;
 export module pragma.lua:interface;
 
 export import luabind;
+export import std.compat;
 
 #undef RegisterLibrary
 
