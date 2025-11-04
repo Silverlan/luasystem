@@ -63,12 +63,12 @@ export {
 		};
 		enum class DLLLUA Type : decltype(LUA_TNONE) { None = LUA_TNONE, Nil = LUA_TNIL, Bool = LUA_TBOOLEAN, LightUserData = LUA_TLIGHTUSERDATA, Number = LUA_TNUMBER, String = LUA_TSTRING, Table = LUA_TTABLE, Function = LUA_TFUNCTION, UserData = LUA_TUSERDATA, Thread = LUA_TTHREAD };
 
-		constexpr std::string SCRIPT_DIRECTORY = "lua";
-		constexpr std::string SCRIPT_DIRECTORY_SLASH = "lua/";
-		constexpr std::string FILE_EXTENSION = "lua";
-		constexpr std::string FILE_EXTENSION_PRECOMPILED = "luac";
-		constexpr std::string DOT_FILE_EXTENSION = ".lua";
-		constexpr std::string DOT_FILE_EXTENSION_PRECOMPILED = ".luac";
+		CONSTEXPR_DLL_COMPAT std::string SCRIPT_DIRECTORY = "lua";
+		CONSTEXPR_DLL_COMPAT std::string SCRIPT_DIRECTORY_SLASH = "lua/";
+		CONSTEXPR_DLL_COMPAT std::string FILE_EXTENSION = "lua";
+		CONSTEXPR_DLL_COMPAT std::string FILE_EXTENSION_PRECOMPILED = "luac";
+		CONSTEXPR_DLL_COMPAT std::string DOT_FILE_EXTENSION = ".lua";
+		CONSTEXPR_DLL_COMPAT std::string DOT_FILE_EXTENSION_PRECOMPILED = ".luac";
 
 		template<typename T>
 		using base_type = typename std::remove_cv_t<std::remove_pointer_t<std::remove_reference_t<T>>>;
@@ -493,6 +493,27 @@ export namespace lua {
 	inline int open_jit(lua_State *L) { return luaopen_jit(L); }
 	inline int open_ffi(lua_State *L) { return luaopen_ffi(L); }
 	inline int open_string_buffer(lua_State *L) { return luaopen_string_buffer(L); }
+
+	CONSTEXPR_COMPAT const char *LIB_COROUTINE = LUA_COLIBNAME;
+	CONSTEXPR_COMPAT const char *LIB_MATH = LUA_MATHLIBNAME;
+	CONSTEXPR_COMPAT const char *LIB_STRING = LUA_STRLIBNAME;
+	CONSTEXPR_COMPAT const char *LIB_TABLE = LUA_TABLIBNAME;
+	CONSTEXPR_COMPAT const char *LIB_IO = LUA_IOLIBNAME;
+	CONSTEXPR_COMPAT const char *LIB_OS = LUA_OSLIBNAME;
+	CONSTEXPR_COMPAT const char *LIB_PACKAGE = LUA_LOADLIBNAME;
+	CONSTEXPR_COMPAT const char *LIB_DEBUG = LUA_DBLIBNAME;
+	CONSTEXPR_COMPAT const char *LIB_BIT = LUA_BITLIBNAME;
+	CONSTEXPR_COMPAT const char *LIB_JIT = LUA_JITLIBNAME;
+	CONSTEXPR_COMPAT const char *LIB_FFI = LUA_FFILIBNAME;
+
+#ifndef USE_LUAJIT
+	CONSTEXPR_COMPAT const char *LIB_UTF8 = LUA_UTF8LIBNAME
+	inline int open_utf8(lua_State *L) { return luaopen_utf8(L); }
+	inline int open_coroutine(lua_State *L) { return luaopen_coroutine(L); }
+#endif
+#if defined(LUA_COMPAT_BITLIB)
+	inline int open_bit32(lua_State *L) { return luaopen_bit32(L); }
+#endif
 
 	inline void open_libs(lua_State *L) { luaL_openlibs(L); }
 
