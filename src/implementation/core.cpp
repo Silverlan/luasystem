@@ -207,7 +207,7 @@ const char *Lua::CheckString(lua_State *lua, int32_t idx) { return luaL_checkstr
 void Lua::CheckType(lua_State *lua, int32_t narg, int32_t t) { luaL_checktype(lua, narg, t); }
 void Lua::CheckTable(lua_State *lua, int32_t narg) { CheckType(lua, narg, LUA_TTABLE); }
 void *Lua::CheckUserData(lua_State *lua, int32_t narg, const std::string &tname) { return luaL_checkudata(lua, narg, tname.c_str()); }
-void Lua::CheckUserData(lua_State *lua, int32_t n) { return pragma::lua::core::checkuserdata(lua, n); }
+void Lua::CheckUserData(lua_State *lua, int32_t n) { return lua::checkuserdata(lua, n); }
 void Lua::CheckFunction(lua_State *lua, int32_t idx) { luaL_checktype(lua, (idx), LUA_TFUNCTION); }
 void Lua::CheckNil(lua_State *lua, int32_t idx) { luaL_checktype(lua, (idx), LUA_TNIL); }
 void Lua::CheckThread(lua_State *lua, int32_t idx) { luaL_checktype(lua, (idx), LUA_TTHREAD); }
@@ -314,6 +314,7 @@ int32_t Lua::PushTable(lua_State *lua, int32_t n, int32_t idx)
 void Lua::SetTableValue(lua_State *lua, int32_t idx) { lua_settable(lua, idx); }
 void Lua::GetTableValue(lua_State *lua, int32_t idx) { lua_gettable(lua, idx); }
 void Lua::SetTableValue(lua_State *lua, int32_t idx, int32_t n) { lua_rawseti(lua, idx, n); }
+void Lua::SetRaw(lua_State *lua, int32_t idx) { lua_rawset(lua, idx); }
 std::size_t Lua::GetObjectLength(lua_State *l, const luabind::object &o)
 {
 	o.push(l);
@@ -321,7 +322,7 @@ std::size_t Lua::GetObjectLength(lua_State *l, const luabind::object &o)
 	Pop(l);
 	return len;
 }
-std::size_t Lua::GetObjectLength(lua_State *l, int32_t idx) { return pragma::lua::core::rawlen(l, idx); }
+std::size_t Lua::GetObjectLength(lua_State *l, int32_t idx) { return lua::rawlen(l, idx); }
 
 static Lua::StatusCode get_protected_table_value(lua_State *lua, int32_t idx, int32_t (*f)(lua_State *))
 {

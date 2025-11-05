@@ -8,7 +8,7 @@ module;
 export module pragma.lua:util;
 
 export {
-	namespace pragma::lua::core {
+	namespace lua {
 		DLLLUA void luaX52_luaL_setfuncs(lua_State *L, const luaL_Reg *l, int nup)
 		{
 			luaL_checkstack(L, nup, "too many upvalues");
@@ -21,16 +21,10 @@ export {
 			lua_pop(L, nup); /* remove upvalues */
 		}
 
-		DLLLUA void setfuncs(lua_State *L, const luaL_Reg *l, int nup) {
-			luaX52_luaL_setfuncs(L, l, nup);
-		}
+		DLLLUA void setfuncs(lua_State *L, const luaL_Reg *l, int nup) { luaX52_luaL_setfuncs(L, l, nup); }
 
-		DLLLUA void checkuserdata(lua_State *L, int n) {
-			luaL_checktype(L, n, LUA_TUSERDATA);
-		}
+		DLLLUA void checkuserdata(lua_State *L, int n) { luaL_checktype(L, n, LUA_TUSERDATA); }
 
-		DLLLUA size_t rawlen(lua_State *L, int idx) {
-			return lua_objlen(L, idx);
-		}
+		DLLLUA size_t rawlen(lua_State *L, int idx) { return lua_objlen(L, idx); }
 	}
 }

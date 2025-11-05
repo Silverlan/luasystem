@@ -17,7 +17,7 @@ export namespace Lua {
 		bool Contains(const std::string_view &path) const;
 		void Add(const std::string_view &path);
 		void Clear();
-	private:
+	  private:
 		std::unordered_set<uint32_t> m_cache;
 	};
 
@@ -35,7 +35,7 @@ export namespace Lua {
 
 		// These need a const char* which exists for the lifetime of the lua state! (std::string won't work!)
 		luabind::module_ &RegisterLibrary(const char *name, const std::shared_ptr<luabind::module_> &mod);
-        luabind::module_ &RegisterLibrary(const char *name, const std::unordered_map<std::string, int (*)(lua_State *)> &functions = {});
+		luabind::module_ &RegisterLibrary(const char *name, const std::unordered_map<std::string, int (*)(lua_State *)> &functions = {});
 	  protected:
 		lua_State *m_state = nullptr;
 		std::string m_identifier;
