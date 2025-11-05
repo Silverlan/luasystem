@@ -350,6 +350,14 @@ export {
 export namespace lua {
 	using Integer = lua_Integer;
 	using Number = lua_Number;
+	using State = lua_State;
+	using FunctionRegistration = luaL_Reg;
+	using CFunction = lua_CFunction;
+	using AllocationFunction = lua_Alloc;
+	using ReaderFunction = lua_Reader;
+	using WriterFunction = lua_Writer;
+	using HookFunction = lua_Hook;
+	using StringBuffer = luaL_Buffer;
 
 	DLLLUA int snapshot(lua_State *l);
 
@@ -419,6 +427,9 @@ export namespace lua {
 		return res;
 	}
 	inline void push_c_closure(lua_State *L, lua_CFunction fn, int n) { lua_pushcclosure(L, fn, n); }
+#ifndef USE_LUAJIT
+	inline void require(lua_State *L, const char *modname, lua_CFunction openf, int glb) { luaL_requiref(L, modname, openf, glb); }
+#endif
 	inline void push_boolean(lua_State *L, int b) { lua_pushboolean(L, b); }
 	inline void push_light_user_data(lua_State *L, void *p) { lua_pushlightuserdata(L, p); }
 	inline int push_thread(lua_State *L) { return lua_pushthread(L); }
@@ -462,8 +473,6 @@ export namespace lua {
 	inline void set_alloc_function(lua_State *L, lua_Alloc f, void *ud) { lua_setallocf(L, f, ud); }
 
 	inline void set_level(lua_State *from, lua_State *to) { lua_setlevel(from, to); }
-
-	using hook = lua_Hook;
 
 	inline int get_stack(lua_State *L, int level, lua_Debug *ar) { return lua_getstack(L, level, ar); }
 	inline int get_info(lua_State *L, const char *what, lua_Debug *ar) { return lua_getinfo(L, what, ar); }
@@ -671,5 +680,4 @@ export namespace lua {
 		}
 		return arg;
 	};
-	using State = lua_State;
 }
