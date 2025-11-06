@@ -274,6 +274,24 @@ export {
 		DLLLUA std::string get_current_file(lua_State *l);
 
 		DLLLUA StatusCode LoadFile(lua_State *lua, std::string &fInOut, fsys::SearchFlags includeFlags = fsys::SearchFlags::All, fsys::SearchFlags excludeFlags = fsys::SearchFlags::None);
+	
+		DLLLUA void SetTableCFunction(lua_State *l, const char *tableName, const char *funcName, lua_CFunction f)
+		{
+			lua_getglobal(l, tableName);                                                                                                                                                                                                                                                                 \
+			if(lua_istable(l, -1)) {                                                                                                                                                                                                                                                                     \
+				int top = lua_gettop(l);                                                                                                                                                                                                                                                                 \
+				lua_pushstring(l, funcName);                                                                                                                                                                                                                                                             \
+				lua_pushcfunction(l, f);                                                                                                                                                                                                                                                          \
+				lua_settable(l, top);                                                                                                                                                                                                                                                                    \
+			}                                                                                                                                                                                                                                                                                            \
+			lua_pop(l, 1);
+		}
+
+		DLLLUA int create_reference(lua_State *l, int index)
+		{
+			lua_pushvalue(l, index);
+			return luaL_ref(l, LUA_REGISTRYINDEX);
+		}
 	};
 
 	template<typename T>
@@ -358,6 +376,8 @@ export namespace lua {
 	using WriterFunction = lua_Writer;
 	using HookFunction = lua_Hook;
 	using StringBuffer = luaL_Buffer;
+	using DebugInfo = lua_Debug;
+	CONSTEXPR_DLL_COMPAT int32_t MultiReturn = LUA_MULTRET;
 
 	DLLLUA int snapshot(lua_State *l);
 
@@ -396,7 +416,7 @@ export namespace lua {
 	inline int is_c_function(lua_State *L, int idx) { return lua_iscfunction(L, idx); }
 	inline int is_user_data(lua_State *L, int idx) { return lua_isuserdata(L, idx); }
 	inline Type type(lua_State *L, int idx) { return static_cast<Type>(lua_type(L, idx)); }
-	inline const char *type_name(lua_State *L, int tp) { return lua_typename(L, tp); }
+	inline const char *type_name(lua_State *L, Type tp) { return lua_typename(L, static_cast<int>(tp)); }
 
 	inline int equal(lua_State *L, int idx1, int idx2) { return lua_equal(L, idx1, idx2); }
 	inline int raw_equal(lua_State *L, int idx1, int idx2) { return lua_rawequal(L, idx1, idx2); }
@@ -465,6 +485,7 @@ export namespace lua {
 	inline int gc(lua_State *L, int what, int data) { return lua_gc(L, what, data); }
 
 	inline int error(lua_State *L) { return lua_error(L); }
+	inline int error(lua_State *L, const char *errMsg) { return luaL_error(L, errMsg); }
 	inline int error(lua_State *L, int arg, const char *extramsg) { return luaL_argerror(L, arg, extramsg); }
 	inline int next(lua_State *L, int idx) { return lua_next(L, idx); }
 	inline void concat(lua_State *L, int n) { lua_concat(L, n); }
@@ -495,6 +516,8 @@ export namespace lua {
 
 	inline int is_yieldable(lua_State *L) { return lua_isyieldable(L); }
 
+	inline int get_debug_info(lua_State *L, const char *what, lua_Debug *ar) { return lua_getinfo(L, what, ar); }
+
 	inline int open_base(lua_State *L) { return luaopen_base(L); }
 	inline int open_math(lua_State *L) { return luaopen_math(L); }
 	inline int open_string(lua_State *L) { return luaopen_string(L); }
@@ -508,20 +531,20 @@ export namespace lua {
 	inline int open_ffi(lua_State *L) { return luaopen_ffi(L); }
 	inline int open_string_buffer(lua_State *L) { return luaopen_string_buffer(L); }
 
-	CONSTEXPR_COMPAT const char *LIB_COROUTINE = LUA_COLIBNAME;
-	CONSTEXPR_COMPAT const char *LIB_MATH = LUA_MATHLIBNAME;
-	CONSTEXPR_COMPAT const char *LIB_STRING = LUA_STRLIBNAME;
-	CONSTEXPR_COMPAT const char *LIB_TABLE = LUA_TABLIBNAME;
-	CONSTEXPR_COMPAT const char *LIB_IO = LUA_IOLIBNAME;
-	CONSTEXPR_COMPAT const char *LIB_OS = LUA_OSLIBNAME;
-	CONSTEXPR_COMPAT const char *LIB_PACKAGE = LUA_LOADLIBNAME;
-	CONSTEXPR_COMPAT const char *LIB_DEBUG = LUA_DBLIBNAME;
-	CONSTEXPR_COMPAT const char *LIB_BIT = LUA_BITLIBNAME;
-	CONSTEXPR_COMPAT const char *LIB_JIT = LUA_JITLIBNAME;
-	CONSTEXPR_COMPAT const char *LIB_FFI = LUA_FFILIBNAME;
+	CONSTEXPR_DLL_COMPAT const char *LIB_COROUTINE = LUA_COLIBNAME;
+	CONSTEXPR_DLL_COMPAT const char *LIB_MATH = LUA_MATHLIBNAME;
+	CONSTEXPR_DLL_COMPAT const char *LIB_STRING = LUA_STRLIBNAME;
+	CONSTEXPR_DLL_COMPAT const char *LIB_TABLE = LUA_TABLIBNAME;
+	CONSTEXPR_DLL_COMPAT const char *LIB_IO = LUA_IOLIBNAME;
+	CONSTEXPR_DLL_COMPAT const char *LIB_OS = LUA_OSLIBNAME;
+	CONSTEXPR_DLL_COMPAT const char *LIB_PACKAGE = LUA_LOADLIBNAME;
+	CONSTEXPR_DLL_COMPAT const char *LIB_DEBUG = LUA_DBLIBNAME;
+	CONSTEXPR_DLL_COMPAT const char *LIB_BIT = LUA_BITLIBNAME;
+	CONSTEXPR_DLL_COMPAT const char *LIB_JIT = LUA_JITLIBNAME;
+	CONSTEXPR_DLL_COMPAT const char *LIB_FFI = LUA_FFILIBNAME;
 
 #ifndef USE_LUAJIT
-	CONSTEXPR_COMPAT const char *LIB_UTF8 = LUA_UTF8LIBNAME inline int open_utf8(lua_State * L) { return luaopen_utf8(L); }
+	CONSTEXPR_DLL_COMPAT const char *LIB_UTF8 = LUA_UTF8LIBNAME inline int open_utf8(lua_State * L) { return luaopen_utf8(L); }
 	inline int open_coroutine(lua_State *L) { return luaopen_coroutine(L); }
 #endif
 #if defined(LUA_COMPAT_BITLIB)
