@@ -395,6 +395,18 @@ export namespace lua {
 		Thread = LUA_TTHREAD,
 	};
 
+	enum class GarbageCollectorTask : int {
+		Stop = LUA_GCSTOP,
+		Restart = LUA_GCRESTART,
+		Collect = LUA_GCCOLLECT,
+		CurrentMemoryInUseInKb = LUA_GCCOUNT,
+		CurrentMemoryRemainderBytes = LUA_GCCOUNTB,
+		Step = LUA_GCSTEP,
+		SetPause = LUA_GCSETPAUSE,
+		SetStepMultiplier = LUA_GCSETSTEPMUL,
+		IsRunning = LUA_GCISRUNNING,
+	};
+
 	inline lua_State *new_state(lua_Alloc f, void *ud) { return lua_newstate(f, ud); }
 	inline void close(lua_State *L) { lua_close(L); }
 	inline lua_State *new_thread(lua_State *L) { return lua_newthread(L); }
@@ -482,7 +494,7 @@ export namespace lua {
 	inline int resume(lua_State *L, int narg) { return lua_resume(L, narg); }
 	inline int status(lua_State *L) { return lua_status(L); }
 
-	inline int gc(lua_State *L, int what, int data) { return lua_gc(L, what, data); }
+	inline int gc(lua_State *L, GarbageCollectorTask what, int data) { return lua_gc(L, static_cast<int>(what), data); }
 
 	inline int error(lua_State *L) { return lua_error(L); }
 	inline int error(lua_State *L, const char *errMsg) { return luaL_error(L, errMsg); }
