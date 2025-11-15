@@ -63,12 +63,12 @@ export {
 		};
 		enum class DLLLUA Type : decltype(LUA_TNONE) { None = LUA_TNONE, Nil = LUA_TNIL, Bool = LUA_TBOOLEAN, LightUserData = LUA_TLIGHTUSERDATA, Number = LUA_TNUMBER, String = LUA_TSTRING, Table = LUA_TTABLE, Function = LUA_TFUNCTION, UserData = LUA_TUSERDATA, Thread = LUA_TTHREAD };
 
-		CONSTEXPR_DLL_COMPAT std::string SCRIPT_DIRECTORY = "lua";
-		CONSTEXPR_DLL_COMPAT std::string SCRIPT_DIRECTORY_SLASH = "lua/";
-		CONSTEXPR_DLL_COMPAT std::string FILE_EXTENSION = "lua";
-		CONSTEXPR_DLL_COMPAT std::string FILE_EXTENSION_PRECOMPILED = "luac";
-		CONSTEXPR_DLL_COMPAT std::string DOT_FILE_EXTENSION = ".lua";
-		CONSTEXPR_DLL_COMPAT std::string DOT_FILE_EXTENSION_PRECOMPILED = ".luac";
+		CLASS_ENUM_COMPAT std::string SCRIPT_DIRECTORY;
+		CLASS_ENUM_COMPAT std::string SCRIPT_DIRECTORY_SLASH;
+		CLASS_ENUM_COMPAT std::string FILE_EXTENSION;
+		CLASS_ENUM_COMPAT std::string FILE_EXTENSION_PRECOMPILED;
+		CLASS_ENUM_COMPAT std::string DOT_FILE_EXTENSION;
+		CLASS_ENUM_COMPAT std::string DOT_FILE_EXTENSION_PRECOMPILED;
 
 		template<typename T>
 		using base_type = typename std::remove_cv_t<std::remove_pointer_t<std::remove_reference_t<T>>>;
