@@ -1,8 +1,7 @@
 // SPDX-FileCopyrightText: (c) 2019 Silverlan <opensource@pragma-engine.com>
 // SPDX-License-Identifier: MIT
 
-#ifndef __LUADEFINITIONS_H__
-#define __LUADEFINITIONS_H__
+#pragma once
 
 //#define LUABIND_NO_EXCEPTIONS
 #ifndef LUABIND_DYNAMIC_LINK
@@ -22,6 +21,5 @@
 #define DLLLUA
 #else
 #define DLLLUA __declspec(dllimport)
-#endif
 #endif
 #endif

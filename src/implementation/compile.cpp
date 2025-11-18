@@ -1,12 +1,16 @@
 // SPDX-FileCopyrightText: (c) 2019 Silverlan <opensource@pragma-engine.com>
 // SPDX-License-Identifier: MIT
 
-#include "luasystem.h"
-#include <fsys/filesystem.h>
-#include <sharedutils/util_file.h>
+module;
+
+#include "lua_headers.hpp"
+
+module pragma.lua;
+
+import :core;
 
 VFilePtrReal fLuaCompile = nullptr;
-static int luaWriteBinary(lua_State *, unsigned char *str, size_t len, struct luaL_Buffer *)
+static int luaWriteBinary(lua_State *, unsigned char *str, size_t len, luaL_Buffer *)
 {
 	fLuaCompile->Write(str, len);
 	return 0;

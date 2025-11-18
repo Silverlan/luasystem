@@ -1,11 +1,13 @@
 // SPDX-FileCopyrightText: (c) 2019 Silverlan <opensource@pragma-engine.com>
 // SPDX-License-Identifier: MIT
 
-#include "luainterface.hpp"
-#include "luasystem.h"
-#include "impl_luajit_definitions.hpp"
-#include <sharedutils/util_string.h>
-#include <sharedutils/util_path.hpp>
+module;
+
+#include "lua_headers.hpp"
+
+module pragma.lua;
+
+import :interface;
 
 static std::string get_normalized_path(const std::string_view &path)
 {
