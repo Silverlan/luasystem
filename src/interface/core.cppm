@@ -274,16 +274,16 @@ export {
 		DLLLUA std::string get_current_file(lua_State *l);
 
 		DLLLUA StatusCode LoadFile(lua_State *lua, std::string &fInOut, fsys::SearchFlags includeFlags = fsys::SearchFlags::All, fsys::SearchFlags excludeFlags = fsys::SearchFlags::None);
-	
+
 		DLLLUA void SetTableCFunction(lua_State *l, const char *tableName, const char *funcName, lua_CFunction f)
 		{
-			lua_getglobal(l, tableName);                                                                                                                                                                                                                                                                 \
-			if(lua_istable(l, -1)) {                                                                                                                                                                                                                                                                     \
-				int top = lua_gettop(l);                                                                                                                                                                                                                                                                 \
-				lua_pushstring(l, funcName);                                                                                                                                                                                                                                                             \
-				lua_pushcfunction(l, f);                                                                                                                                                                                                                                                          \
-				lua_settable(l, top);                                                                                                                                                                                                                                                                    \
-			}                                                                                                                                                                                                                                                                                            \
+			lua_getglobal(l, tableName);
+			if(lua_istable(l, -1)) {
+				int top = lua_gettop(l);
+				lua_pushstring(l, funcName);
+				lua_pushcfunction(l, f);
+				lua_settable(l, top);
+			}
 			lua_pop(l, 1);
 		}
 
