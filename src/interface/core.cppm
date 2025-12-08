@@ -388,7 +388,7 @@ export namespace lua {
 		Boolean = LUA_TBOOLEAN,
 		LightUserData = LUA_TLIGHTUSERDATA,
 		Number = LUA_TNUMBER,
-		String = LUA_TTABLE,
+		String = LUA_TSTRING,
 		Table = LUA_TTABLE,
 		Function = LUA_TFUNCTION,
 		UserData = LUA_TUSERDATA,
