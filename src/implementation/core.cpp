@@ -11,7 +11,7 @@ import :core;
 
 static void get_file_chunk_name(std::string &fileName)
 {
-	ustring::replace(fileName, "\\", "/");
+	pragma::string::replace(fileName, "\\", "/");
 	fileName = "@" + fileName;
 }
 static std::string get_file_chunk_name(const std::string &fileName)
@@ -48,12 +48,12 @@ bool Lua::are_precompiled_files_enabled() { return s_precompiledFilesEnabled; }
 void Lua::get_global_nested_library(lua_State *l, const std::string &name)
 {
 	std::vector<std::string> libs;
-	ustring::explode(name, ".", libs);
+	pragma::string::explode(name, ".", libs);
 	if(libs.empty() == false) {
 		Lua::GetGlobal(l, libs.front()); /* 1 */
 		if(Lua::IsSet(l, -1) == false) {
 			Lua::Pop(l, 1); /* 0 */
-			Lua::PushNil(l);
+			PushNil(l);
 			return;
 		}
 		if(libs.size() == 1)
@@ -63,8 +63,8 @@ void Lua::get_global_nested_library(lua_State *l, const std::string &name)
 			auto &lib = *it;
 			auto t = Lua::GetStackTop(l);
 			auto status = Lua::GetProtectedTableValue(l, t, lib);
-			if(status != Lua::StatusCode::Ok) {
-				Lua::PushNil(l);
+			if(status != StatusCode::Ok) {
+				PushNil(l);
 				return;
 			}
 			Lua::RemoveValue(l, -2);
@@ -72,31 +72,31 @@ void Lua::get_global_nested_library(lua_State *l, const std::string &name)
 				return;
 		}
 	}
-	Lua::PushNil(l);
+	PushNil(l);
 }
 
-Lua::StatusCode Lua::LoadFile(lua_State *lua, std::string &fInOut, fsys::SearchFlags includeFlags, fsys::SearchFlags excludeFlags)
+Lua::StatusCode Lua::LoadFile(lua_State *lua, std::string &fInOut, pragma::fs::SearchFlags includeFlags, pragma::fs::SearchFlags excludeFlags)
 {
 	if(s_precompiledFilesEnabled) {
 		if(fInOut.length() > 3 && fInOut.substr(fInOut.length() - 4) == DOT_FILE_EXTENSION) {
 			auto cpath = fInOut.substr(0, fInOut.length() - 4) + DOT_FILE_EXTENSION_PRECOMPILED;
-			if(FileManager::Exists(SCRIPT_DIRECTORY_SLASH + cpath, includeFlags, excludeFlags) == true)
+			if(pragma::fs::exists(SCRIPT_DIRECTORY_SLASH + cpath, includeFlags, excludeFlags) == true)
 				fInOut = cpath;
 		}
 	}
-	fInOut = FileManager::GetNormalizedPath(SCRIPT_DIRECTORY_SLASH + fInOut);
+	fInOut = pragma::fs::get_normalized_path(SCRIPT_DIRECTORY_SLASH + fInOut);
 	std::string err;
-	auto f = FileManager::OpenFile(fInOut.c_str(), "rb", &err, includeFlags, excludeFlags);
+	auto f = pragma::fs::open_file(fInOut.c_str(), pragma::fs::FileMode::Read | pragma::fs::FileMode::Binary, &err, includeFlags, excludeFlags);
 	if(f == nullptr) {
 		lua_pushfstring(lua, ("cannot open %s: " + (!err.empty() ? err : "File not found")).c_str(), fInOut.c_str());
 		return StatusCode::ErrorFile;
 	}
 	auto nf = fInOut;
-	auto fReal = std::dynamic_pointer_cast<VFilePtrInternalReal>(f);
+	auto fReal = std::dynamic_pointer_cast<pragma::fs::VFilePtrInternalReal>(f);
 	if(fReal != nullptr) {
 		// We need the full path (at least relative to the program), otherwise the ZeroBrane debugger may not work in some cases
-		nf = FileManager::GetCanonicalizedPath(fReal->GetPath());
-		static auto len = FileManager::GetProgramPath().length();
+		nf = pragma::fs::get_canonicalized_path(fReal->GetPath());
+		static auto len = pragma::fs::get_program_path().length();
 		nf = nf.substr(len + 1);
 	}
 	auto l = f->GetSize();
@@ -126,7 +126,7 @@ static Lua::StatusCode protected_call(lua_State *lua, const std::function<Lua::S
 	int32_t s = 0;
 	if(pushArgs != nullptr) {
 		auto pushArgStatusCode = pushArgs(lua);
-		s = umath::to_integral(pushArgStatusCode);
+		s = pragma::math::to_integral(pushArgStatusCode);
 		if(s != 0) {
 			if(traceback || pushArgErrorHandler) {
 				Lua::RemoveValue(lua, tracebackIdx);
@@ -229,13 +229,13 @@ bool Lua::CheckBool(lua_State *lua, int32_t idx)
 bool Lua::PushLuaFunctionFromString(lua_State *l, const std::string &luaFunction, const std::string &chunkName, std::string &outErrMsg)
 {
 	auto bufLuaFunction = "return " + luaFunction;
-	auto r = static_cast<Lua::StatusCode>(luaL_loadbuffer(l, bufLuaFunction.c_str(), bufLuaFunction.length(), chunkName.c_str())); /* 1 */
-	if(r != Lua::StatusCode::Ok) {
+	auto r = static_cast<StatusCode>(luaL_loadbuffer(l, bufLuaFunction.c_str(), bufLuaFunction.length(), chunkName.c_str())); /* 1 */
+	if(r != StatusCode::Ok) {
 		outErrMsg = Lua::CheckString(l, -1);
 		Lua::Pop(l); /* 0 */
 		return false;
 	}
-	if(Lua::ProtectedCall(l, 0, 1, outErrMsg) != Lua::StatusCode::Ok) {
+	if(Lua::ProtectedCall(l, 0, 1, outErrMsg) != StatusCode::Ok) {
 		Lua::Pop(l); /* 0 */
 		return false;
 	}
@@ -456,7 +456,7 @@ static std::string GetPathFromFileName(std::string str)
 static std::vector<std::string> s_includeStack;
 Lua::StatusCode Lua::ExecuteFile(lua_State *lua, std::string &fInOut, std::string &outErr, int32_t (*traceback)(lua_State *), int32_t numRet, void (*loadErrorHandler)(lua_State *, StatusCode))
 {
-	fInOut = FileManager::GetNormalizedPath(fInOut);
+	fInOut = pragma::fs::get_normalized_path(fInOut);
 	auto path = GetPathFromFileName(fInOut);
 	if(!path.empty() && (path.front() == '/' || path.front() == '\\'))
 		path = path.substr(1);
@@ -480,12 +480,12 @@ void Lua::ExecuteFiles(lua_State *lua, const std::string &subPath, std::string &
 
 	std::vector<std::string> files;
 	if(s_precompiledFilesEnabled)
-		FileManager::FindFiles((path + "*." + FILE_EXTENSION_PRECOMPILED).c_str(), &files, nullptr);
+		pragma::fs::find_files((path + "*." + FILE_EXTENSION_PRECOMPILED).c_str(), &files, nullptr);
 
 	if(s_precompiledFilesEnabled) {
 		// Add un-compiled lua-files, but only if no compiled version exists
 		std::vector<std::string> rFiles;
-		FileManager::FindFiles((path + "*." + FILE_EXTENSION).c_str(), &rFiles, nullptr);
+		pragma::fs::find_files((path + "*." + FILE_EXTENSION).c_str(), &rFiles, nullptr);
 		files.reserve(files.size() + rFiles.size());
 		for(auto &fName : rFiles) {
 			auto lname = fName.substr(0, fName.length() - 3) + FILE_EXTENSION_PRECOMPILED;
@@ -495,7 +495,7 @@ void Lua::ExecuteFiles(lua_State *lua, const std::string &subPath, std::string &
 		}
 	}
 	else
-		FileManager::FindFiles((path + "*." + FILE_EXTENSION).c_str(), &files, nullptr);
+		pragma::fs::find_files((path + "*." + FILE_EXTENSION).c_str(), &files, nullptr);
 
 	for(auto &f : files) {
 		auto path = subPath + f;
@@ -529,7 +529,7 @@ std::string Lua::get_current_file(lua_State *l)
 	int32_t level = 0;
 	while(lua_getstack(l, level, &info)) {
 		lua_getinfo(l, "nSl", &info);
-		if(ustring::compare(info.what, "C") == false && info.source != nullptr)
+		if(pragma::string::compare(info.what, "C") == false && info.source != nullptr)
 			return get_source(info);
 		++level;
 	}

@@ -273,7 +273,7 @@ export {
 		DLLLUA bool compile_file(lua_State *l, const std::string &outPath);
 		DLLLUA std::string get_current_file(lua_State *l);
 
-		DLLLUA StatusCode LoadFile(lua_State *lua, std::string &fInOut, fsys::SearchFlags includeFlags = fsys::SearchFlags::All, fsys::SearchFlags excludeFlags = fsys::SearchFlags::None);
+		DLLLUA StatusCode LoadFile(lua_State *lua, std::string &fInOut, pragma::fs::SearchFlags includeFlags = pragma::fs::SearchFlags::All, pragma::fs::SearchFlags excludeFlags = pragma::fs::SearchFlags::None);
 
 		DLLLUA void SetTableCFunction(lua_State *l, const char *tableName, const char *funcName, lua_CFunction f)
 		{
