@@ -61,7 +61,19 @@ export {
 			ErrorErrorHandler = LUA_ERRERR,
 			ErrorFile = LUA_ERRFILE
 		};
-		enum class DLLLUA Type : decltype(LUA_TNONE) { None = LUA_TNONE, Nil = LUA_TNIL, Bool = LUA_TBOOLEAN, LightUserData = LUA_TLIGHTUSERDATA, Number = LUA_TNUMBER, String = LUA_TSTRING, Table = LUA_TTABLE, Function = LUA_TFUNCTION, UserData = LUA_TUSERDATA, Thread = LUA_TTHREAD };
+		enum class Type : int {
+			None = LUA_TNONE,
+
+			Nil = LUA_TNIL,
+			Boolean = LUA_TBOOLEAN,
+			LightUserData = LUA_TLIGHTUSERDATA,
+			Number = LUA_TNUMBER,
+			String = LUA_TSTRING,
+			Table = LUA_TTABLE,
+			Function = LUA_TFUNCTION,
+			UserData = LUA_TUSERDATA,
+			Thread = LUA_TTHREAD,
+		};
 
 		CLASS_ENUM_COMPAT std::string SCRIPT_DIRECTORY;
 		CLASS_ENUM_COMPAT std::string SCRIPT_DIRECTORY_SLASH;
@@ -381,19 +393,7 @@ export namespace lua {
 
 	DLLLUA int snapshot(lua_State *l);
 
-	enum class Type : int {
-		None = LUA_TNONE,
-
-		Nil = LUA_TNIL,
-		Boolean = LUA_TBOOLEAN,
-		LightUserData = LUA_TLIGHTUSERDATA,
-		Number = LUA_TNUMBER,
-		String = LUA_TSTRING,
-		Table = LUA_TTABLE,
-		Function = LUA_TFUNCTION,
-		UserData = LUA_TUSERDATA,
-		Thread = LUA_TTHREAD,
-	};
+	using Type = Lua::Type;
 
 	enum class GarbageCollectorTask : int {
 		Stop = LUA_GCSTOP,

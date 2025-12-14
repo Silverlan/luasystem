@@ -563,7 +563,7 @@ const char *Lua::GetTypeString(lua_State *l, int32_t n)
 				arg = "nil";
 				break;
 			}
-		case Type::Bool:
+		case Type::Boolean:
 			{
 				arg = "Boolean";
 				break;
