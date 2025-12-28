@@ -5,6 +5,8 @@ option(CONFIG_USE_LUAJIT "Use LuaJIT." ON)
 set(PROJ_NAME luasystem)
 pr_add_library(${PROJ_NAME} SHARED)
 
+pr_include_windows_clang_export_definitions_workaround(${PROJ_NAME})
+
 if(CONFIG_USE_LUAJIT)
 	pr_add_compile_definitions(${PROJ_NAME} -DUSE_LUAJIT PUBLIC)
 	set(LUAJIT_DISABLE_JIT OFF CACHE BOOL "Disable the JIT compiler" FORCE)

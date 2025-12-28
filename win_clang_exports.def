@@ -1,0 +1,20 @@
+LIBRARY "luasystem"
+EXPORTS
+    ?LIB_COROUTINE@lua@@3PEBDEB
+    ?LIB_MATH@lua@@3PEBDEB
+    ?LIB_STRING@lua@@3PEBDEB
+    ?LIB_TABLE@lua@@3PEBDEB
+    ?LIB_IO@lua@@3PEBDEB
+    ?LIB_OS@lua@@3PEBDEB
+    ?LIB_PACKAGE@lua@@3PEBDEB
+    ?LIB_DEBUG@lua@@3PEBDEB
+    ?LIB_BIT@lua@@3PEBDEB
+    ?LIB_JIT@lua@@3PEBDEB
+    ?LIB_FFI@lua@@3PEBDEB
+
+    ?SCRIPT_DIRECTORY@Lua@@3V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@A
+    ?SCRIPT_DIRECTORY_SLASH@Lua@@3V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@A
+    ?FILE_EXTENSION@Lua@@3V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@A
+    ?FILE_EXTENSION_PRECOMPILED@Lua@@3V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@A
+    ?DOT_FILE_EXTENSION@Lua@@3V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@A
+    ?DOT_FILE_EXTENSION_PRECOMPILED@Lua@@3V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@A
