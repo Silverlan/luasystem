@@ -4,8 +4,7 @@ option(CONFIG_USE_LUAJIT "Use LuaJIT." ON)
 
 set(PROJ_NAME luasystem)
 pr_add_library(${PROJ_NAME} SHARED)
-
-pr_include_windows_clang_export_definitions_workaround(${PROJ_NAME})
+pr_add_export_macro(${PROJ_NAME} DLLLUA)
 
 if(CONFIG_USE_LUAJIT)
 	pr_add_compile_definitions(${PROJ_NAME} -DUSE_LUAJIT PUBLIC)

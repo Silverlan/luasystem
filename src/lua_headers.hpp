@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "luadefinitions.hpp"
 extern "C" {
 #include "lua.h"
 #include "lualib.h"
