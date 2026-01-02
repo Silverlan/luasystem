@@ -21,13 +21,39 @@ static std::string get_file_chunk_name(const std::string &fileName)
 	return chunkName;
 }
 
+#ifdef WINDOWS_CLANG_COMPILER_FIX
+const std::string &Lua::GET_SCRIPT_DIRECTORY() {
+	static std::string str = "lua";
+	return str;
+}
+const std::string &Lua::GET_SCRIPT_DIRECTORY_SLASH() {
+	static std::string str = "lua/";
+	return str;
+}
+const std::string &Lua::GET_FILE_EXTENSION() {
+	static std::string str = "lua";
+	return str;
+}
+const std::string &Lua::GET_FILE_EXTENSION_PRECOMPILED() {
+	static std::string str = "luac";
+	return str;
+}
+const std::string &Lua::GET_DOT_FILE_EXTENSION() {
+	static std::string str = ".lua";
+	return str;
+}
+const std::string &Lua::GET_DOT_FILE_EXTENSION_PRECOMPILED() {
+	static std::string str = ".luac";
+	return str;
+}
+#else
 std::string Lua::SCRIPT_DIRECTORY = "lua";
 std::string Lua::SCRIPT_DIRECTORY_SLASH = "lua/";
 std::string Lua::FILE_EXTENSION = "lua";
 std::string Lua::FILE_EXTENSION_PRECOMPILED = "luac";
 std::string Lua::DOT_FILE_EXTENSION = ".lua";
 std::string Lua::DOT_FILE_EXTENSION_PRECOMPILED = ".luac";
-
+#endif
 lua_State *Lua::CreateState()
 {
 	lua_State *lua = luaL_newstate();
