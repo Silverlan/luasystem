@@ -26,5 +26,7 @@ export {
 		DLLLUA void checkuserdata(lua_State *L, int n) { luaL_checktype(L, n, LUA_TUSERDATA); }
 
 		DLLLUA size_t rawlen(lua_State *L, int idx) { return lua_objlen(L, idx); }
+
+		DLLLUA size_t get_memory_usage(lua_State *L);
 	}
 }

@@ -660,3 +660,10 @@ luabind::object Lua::WeakReferenceToObject(const luabind::weak_ref &ref)
 void Lua::RegisterLibraryEnums(lua_State *l, const std::string &libName, const std::unordered_map<std::string, lua_Integer> &enums) { RegisterLibraryValues(l, libName, enums); }
 
 void Lua::GetField(lua_State *l, int32_t idx, const std::string &fieldName) { lua_getfield(l, idx, fieldName.c_str()); }
+
+size_t lua::get_memory_usage(lua_State *L)
+{
+	const int kb = gc(L, GarbageCollectorTask::CurrentMemoryInUseInKb, 0);
+	const int b = gc(L, GarbageCollectorTask::CurrentMemoryRemainderBytes, 0);
+	return static_cast<std::size_t>(kb) * 1024u + static_cast<std::size_t>(b);
+}
