@@ -128,7 +128,7 @@ Lua::StatusCode Lua::LoadFile(lua_State *lua, std::string &fInOut, pragma::fs::S
 	if(fReal != nullptr) {
 		// We need the full path (at least relative to the program), otherwise the ZeroBrane debugger may not work in some cases
 		std::string absPath;
-		if(pragma::fs::find_absolute_path(nf, absPath))
+		if(pragma::fs::find_relative_path(fReal->GetPath(), absPath))
 			nf = absPath;
 	}
 	auto l = f->GetSize();
