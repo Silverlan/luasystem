@@ -22,27 +22,33 @@ static std::string get_file_chunk_name(const std::string &fileName)
 }
 
 #ifdef WINDOWS_CLANG_COMPILER_FIX
-const std::string &Lua::GET_SCRIPT_DIRECTORY() {
+const std::string &Lua::GET_SCRIPT_DIRECTORY()
+{
 	static std::string str = "lua";
 	return str;
 }
-const std::string &Lua::GET_SCRIPT_DIRECTORY_SLASH() {
+const std::string &Lua::GET_SCRIPT_DIRECTORY_SLASH()
+{
 	static std::string str = "lua/";
 	return str;
 }
-const std::string &Lua::GET_FILE_EXTENSION() {
+const std::string &Lua::GET_FILE_EXTENSION()
+{
 	static std::string str = "lua";
 	return str;
 }
-const std::string &Lua::GET_FILE_EXTENSION_PRECOMPILED() {
+const std::string &Lua::GET_FILE_EXTENSION_PRECOMPILED()
+{
 	static std::string str = "luac";
 	return str;
 }
-const std::string &Lua::GET_DOT_FILE_EXTENSION() {
+const std::string &Lua::GET_DOT_FILE_EXTENSION()
+{
 	static std::string str = ".lua";
 	return str;
 }
-const std::string &Lua::GET_DOT_FILE_EXTENSION_PRECOMPILED() {
+const std::string &Lua::GET_DOT_FILE_EXTENSION_PRECOMPILED()
+{
 	static std::string str = ".luac";
 	return str;
 }
@@ -121,9 +127,9 @@ Lua::StatusCode Lua::LoadFile(lua_State *lua, std::string &fInOut, pragma::fs::S
 	auto fReal = std::dynamic_pointer_cast<pragma::fs::VFilePtrInternalReal>(f);
 	if(fReal != nullptr) {
 		// We need the full path (at least relative to the program), otherwise the ZeroBrane debugger may not work in some cases
-		nf = pragma::fs::get_canonicalized_path(fReal->GetPath());
-		static auto len = pragma::fs::get_program_path().length();
-		nf = nf.substr(len + 1);
+		std::string absPath;
+		if(pragma::fs::find_absolute_path(nf, absPath))
+			nf = absPath;
 	}
 	auto l = f->GetSize();
 	std::vector<char> buf(l);
